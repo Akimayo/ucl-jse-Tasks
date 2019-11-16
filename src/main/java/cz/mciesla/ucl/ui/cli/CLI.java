@@ -30,6 +30,8 @@ public class CLI implements ICLI {
     private IMenuView menuView;
     private IFormView formView;
 
+    private final Scanner sc;
+
     public CLI() {
         menuFactory = new MenuFactory();
 
@@ -38,6 +40,8 @@ public class CLI implements ICLI {
         taskView = new TaskView();
         menuView = new MenuView();
         formView = new FormView();
+
+        this.sc = new Scanner(System.in);
     }
 
     @Override
@@ -65,19 +69,15 @@ public class CLI implements ICLI {
 
     // region Prompts
     @Override
-    @SuppressWarnings("resource") // WTF: Closing the scanner breaks prompts
     public int promptNumber() {
-        Scanner sc = new Scanner(System.in);
-        while (!sc.hasNextInt())
-            sc.next();
-        return sc.nextInt();
+        while (!this.sc.hasNextInt())
+            this.sc.next();
+        return this.sc.nextInt();
     }
 
     @Override
-    @SuppressWarnings("resource") // WTF: Closing the scanner breaks prompts
     public String promptString() {
-        Scanner sc = new Scanner(System.in);
-        return sc.nextLine();
+        return this.sc.nextLine();
     }
 
     @Override
@@ -143,7 +143,7 @@ public class CLI implements ICLI {
         }
     }
 
-    // TODO
+    // TODO: Add actions
     // endregion
 
     // region Handlers
@@ -212,7 +212,7 @@ public class CLI implements ICLI {
         return nextMenu;
     }
 
-    // TODO
+    // TODO: Add handlers
 
     private IMenu handleSystemMenuChange(IMenu currentMenu, IMenu nextMenu) {
         if (nextMenu.getType() == MenuType.SYSTEM_BACK) {
@@ -224,6 +224,7 @@ public class CLI implements ICLI {
         } else if (nextMenu.getType() == MenuType.SYSTEM_QUIT) {
             // we will close the application with status code 0 (OK) instead of rendering
             // the menu
+            this.sc.close();
             System.exit(0);
         } else {
             throw new RuntimeException(nextMenu.getType() + " is not valid type of system menu ");
@@ -232,26 +233,24 @@ public class CLI implements ICLI {
         return nextMenu;
     }
 
-    // TODO
+    // TODO: Add handlers
 
     // endregion
 
     private Map<String, String> handleForm(IMenu currentMenu) {
         Map<String, String> ret = new HashMap<String, String>();
-        Scanner sc = new Scanner(System.in);
         for (IFormField field : currentMenu.getFormFields()) {
             this.drawPrompt(field.getLabel());
             System.out.print(field.getTitle() + ": ");
             String in = null;
             boolean hasInput;
             do {
-                hasInput = sc.hasNext();
+                hasInput = this.sc.hasNext();
                 if (hasInput)
-                    in = sc.next();
+                    in = this.sc.next();
             } while (field.getIsRequired() && !hasInput);
             ret.put(field.getIdentifier(), in);
         }
-        sc.close();
         return ret;
     }
 

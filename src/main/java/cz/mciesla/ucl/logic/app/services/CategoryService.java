@@ -1,49 +1,63 @@
 package cz.mciesla.ucl.logic.app.services;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import cz.mciesla.ucl.logic.app.entities.Category;
 import cz.mciesla.ucl.logic.app.entities.definition.Color;
 import cz.mciesla.ucl.logic.app.entities.definition.ICategory;
+import cz.mciesla.ucl.logic.app.entities.definition.IUser;
 import cz.mciesla.ucl.logic.app.services.definition.ICategoryService;
+import cz.mciesla.ucl.logic.app.services.definition.IUserService;
 
 public class CategoryService implements ICategoryService {
-
-    private List<ICategory> categories;
+    private IUserService userService;
 
     public CategoryService(UserService userService) {
-	}
+        this.userService = userService;
+    }
 
-	@Override
+    @Override
     public ICategory[] getAllCategories() {
-        return this.categories.toArray(new ICategory[0]);
+        IUser user = this.userService.getUserLoggedIn();
+        if (user != null)
+            return user.getCategories();
+        else
+            return new ICategory[0];
     }
 
     @Override
     public ICategory getCategoryById(int id) {
-        return this.categories.stream().filter(i -> i.getId() == id).collect(Collectors.toList()).get(0);
+        return Stream.of(this.getAllCategories()).filter(i -> i.getId() == id).findFirst().get();
     }
 
     @Override
     public void createCategory(String title) {
-        this.createCategory(title, Color.BLACK);
+        IUser user = this.userService.getUserLoggedIn();
+        if (user != null)
+            user.addCategory(new Category(title, Color.BLACK));
     }
 
     @Override
     public void createCategory(String title, Color color) {
-        this.categories.add(new Category(title, color));
+        IUser user = this.userService.getUserLoggedIn();
+        if (user != null)
+            user.addCategory(new Category(title, color));
     }
 
     @Override
     public void updateCategory(int id, String title, Color color) {
+        // WTF: ?
         // TODO: Update category
-        
+
     }
 
     @Override
     public void destroyCategory(int id) {
-        this.categories.remove(this.getCategoryById(id));
+        IUser user = this.userService.getUserLoggedIn();
+        if (user != null) {
+            // FIXME: Use index insted of ID
+            user.saveCategory(id, null);
+        }
     }
 
 }

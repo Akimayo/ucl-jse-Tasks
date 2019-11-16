@@ -1,5 +1,6 @@
 package cz.mciesla.ucl.logic.app.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cz.mciesla.ucl.logic.app.entities.definition.ICategory;
@@ -14,15 +15,22 @@ import cz.mciesla.ucl.logic.app.entities.definition.IUser;
 public class User implements IUser, ITaskOwner {
 
     private List<ITask> tasks;
-    private int id;
+    private int id; // TODO: Missing ID (Hibernate)
     private String email;
     private String username;
     private String password;
     private List<ICategory> categories;
     private List<ITag> tags;
 
-    public User(String email2, String username2, String password2) {
-	}
+    public User(String email, String username, String password) {
+        this.email = email;
+        this.username = username;
+        this.password = password;
+
+        this.tasks = new ArrayList<>();
+        this.categories = new ArrayList<>();
+        this.tags = new ArrayList<>();
+    }
 
 	@Override
     public ITask[] getTasks() {
@@ -124,5 +132,6 @@ public class User implements IUser, ITaskOwner {
     public int tagsCount() {
         return this.tags.size();
     }
+
 
 }

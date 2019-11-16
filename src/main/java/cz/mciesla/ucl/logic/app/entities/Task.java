@@ -1,5 +1,6 @@
 package cz.mciesla.ucl.logic.app.entities;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -13,7 +14,7 @@ import cz.mciesla.ucl.logic.app.entities.definition.IUser;
  */
 public class Task implements ITask {
 
-    private int id;
+    private int id; // TODO: Missing ID (Hibernate)
     private String title;
     private String note;
     private IUser user;
@@ -23,7 +24,16 @@ public class Task implements ITask {
     private Date updatedAt;
     private List<ITag> tags;
 
+    private int tagsCountCache;
+    private boolean tagsCountCacheChanged;
+
     public Task(String title, String note, ICategory category) {
+        this.title = title;
+        this.note = note;
+        this.category = category;
+        this.tags = new ArrayList<>();
+
+        this.tagsCountCacheChanged = true;
     }
 
     @Override
@@ -80,17 +90,22 @@ public class Task implements ITask {
     @Override
     public void saveTag(int i, ITag tag) {
         // WTF: ?
+        this.tagsCountCacheChanged = true;
         this.tags.set(i, tag);
     }
 
     @Override
     public void addTag(ITag tag) {
+        this.tagsCountCacheChanged = true;
         this.tags.add(tag);
     }
 
     @Override
     public int tagsCount() {
-        return this.tags.size();
+        if (this.tagsCountCacheChanged)
+            this.tagsCountCache = this.tags.size();
+        this.tagsCountCacheChanged = false;
+        return this.tagsCountCache;
     }
 
     @Override

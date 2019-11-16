@@ -1,6 +1,6 @@
 package cz.mciesla.ucl.logic.app.entities;
 
-import java.util.List;
+import java.util.stream.Stream;
 
 import cz.mciesla.ucl.logic.app.entities.definition.Color;
 import cz.mciesla.ucl.logic.app.entities.definition.ICategory;
@@ -11,44 +11,51 @@ import cz.mciesla.ucl.logic.app.entities.definition.IUser;
  * Category
  */
 public class Category implements ICategory {
-    private int id;
-    private IUser user;
+    private int id; // TODO: Missing ID (Hibernate)
+    private IUser user; // TODO: Missing user (Hibernate/Constructor)
     private String title;
     private Color color;
-    private List<ITask> tasks;
+
+    private int tasksCountCache;
+    private boolean tasksCountCacheChanged;
 
     public Category(String title, Color color) {
-        // TODO: Add ID and User
         this.title = title;
         this.color = color;
+
+        this.tasksCountCacheChanged = true;
+    }
+
+    private Stream<ITask> getUserTasksStream() {
+        return Stream.of(this.user.getTasks());
     }
 
     @Override
     public ITask[] getTasks() {
-        return this.tasks.toArray(new ITask[0]);
+        return (ITask[]) this.getUserTasksStream().filter(i -> i.getCategory().equals(this)).toArray();
     }
 
     @Override
     public ITask getTask(int i) {
-        // FIXME: Access user collection
-        return this.tasks.get(i);
+        return this.getTasks()[i];
     }
 
     @Override
     public void saveTask(int i, ITask task) {
-        // FIXME: Modify user collection
-        this.tasks.set(i, task);
+        this.user.saveTask(i, task);
     }
 
     @Override
     public void addTask(ITask task) {
-        // FIXME: Modify user collection
-        this.tasks.add(task);
+        this.user.addTask(task);
     }
 
     @Override
     public int tasksCount() {
-        return this.tasks.size();
+        if(this.tasksCountCacheChanged)
+            this.tasksCountCache = this.getTasks().length;
+        this.tasksCountCacheChanged = false;
+        return this.tasksCountCache;
     }
 
     @Override
