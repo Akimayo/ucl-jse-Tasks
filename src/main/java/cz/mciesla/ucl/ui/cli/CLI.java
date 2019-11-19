@@ -3,6 +3,7 @@ package cz.mciesla.ucl.ui.cli;
 import cz.mciesla.ucl.logic.exceptions.AlreadyLoggedInException;
 import cz.mciesla.ucl.logic.exceptions.EmailAddressAlreadyUsedException;
 import cz.mciesla.ucl.logic.exceptions.InvalidCredentialsException;
+import cz.mciesla.ucl.logic.exceptions.NotLoggedInException;
 import cz.mciesla.ucl.ui.cli.forms.FormManager;
 import cz.mciesla.ucl.ui.cli.menu.MenuFactory;
 import cz.mciesla.ucl.ui.cli.views.*;
@@ -13,7 +14,6 @@ import cz.mciesla.ucl.ui.definition.menu.IMenu;
 import cz.mciesla.ucl.logic.IAppLogic;
 import cz.mciesla.ucl.ui.definition.menu.IMenuFactory;
 import cz.mciesla.ucl.ui.definition.menu.IMenuOption;
-import cz.mciesla.ucl.ui.definition.menu.MenuType;
 import cz.mciesla.ucl.ui.definition.views.*;
 
 import java.io.Console;
@@ -98,20 +98,22 @@ public class CLI implements ICLI {
 
     // region Logic
     public void invokeAppLogic(IMenu fromMenu, Map<String, String> formData) {
-        if (fromMenu.getIdentifier().equals("login")) {
-            actionLogin(fromMenu, formData);
-        } else if (fromMenu.getIdentifier().equals("register")) {
-            actionRegister(fromMenu, formData);
+        switch (fromMenu.getIdentifier()) {
+            case "login":
+                actionLogin(fromMenu, formData);
+                break;
+            case "register":
+                actionRegister(fromMenu, formData);
+                break;
         }
-        // TODO: Remake into a switch for form app logics
     }
 
     public void invokeAppLogic(IMenu fromMenu) {
         switch (fromMenu.getIdentifier()) {
-            case "main_menu":
-                actionDashboard(fromMenu);
-                break;
-            // TODO: Add all other app logics
+        case "main_menu":
+            actionDashboard(fromMenu);
+            break;
+        // TODO: Add all other app logics
         }
     }
     // endregion
@@ -129,6 +131,7 @@ public class CLI implements ICLI {
         try {
             logic.loginUser(data.get("email"), data.get("password"));
             drawMessage("Přihlášení proběhlo úspěšně");
+
         } catch (AlreadyLoggedInException | InvalidCredentialsException e) {
             drawError(e.getMessage());
         }
@@ -215,21 +218,33 @@ public class CLI implements ICLI {
     // TODO: Add handlers
 
     private IMenu handleSystemMenuChange(IMenu currentMenu, IMenu nextMenu) {
-        if (nextMenu.getType() == MenuType.SYSTEM_BACK) {
-            nextMenu = currentMenu.getParentMenu();
-        } else if (nextMenu.getType() == MenuType.SYSTEM_FILL_FORM) {
-            Map<String, String> formData = handleForm(currentMenu);
-            invokeAppLogic(currentMenu, formData);
-            nextMenu = currentMenu.getParentMenu();
-        } else if (nextMenu.getType() == MenuType.SYSTEM_QUIT) {
-            // we will close the application with status code 0 (OK) instead of rendering
-            // the menu
-            this.sc.close();
-            System.exit(0);
-        } else {
-            throw new RuntimeException(nextMenu.getType() + " is not valid type of system menu ");
+        switch (nextMenu.getType()) {
+            case SYSTEM_BACK:
+                nextMenu = currentMenu.getParentMenu();
+                break;
+            case SYSTEM_FILL_FORM:
+                Map<String, String> formData = handleForm(currentMenu);
+                invokeAppLogic(currentMenu, formData);
+                nextMenu = currentMenu.getParentMenu();
+                break;
+            case SYSTEM_QUIT:
+                // we will close the application with status code 0 (OK) instead of rendering
+                // the menu
+                this.sc.close();
+                System.exit(0);
+                break;
+            case SYSTEM_LOGOUT:
+                try {
+                    this.logic.logoutUser();
+                } catch (NotLoggedInException e) {
+                    drawError(e.getMessage());
+                } finally {
+                    nextMenu = currentMenu.getParentMenu();
+                }
+                break;
+            default:
+                throw new RuntimeException(nextMenu.getType() + " is not valid type of system menu ");
         }
-
         return nextMenu;
     }
 

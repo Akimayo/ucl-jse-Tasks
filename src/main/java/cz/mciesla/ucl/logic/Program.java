@@ -107,7 +107,7 @@ public class Program implements IAppLogic {
 	@Override
 	public ITask[] getTasksFilteredByCategory(String categoryTitle) {
 		// TODO: String-based search
-		//		 (Probably after hooking up DTO - using database query for ID)
+        //		 (Probably after hooking up DTO - using database query for ID)
 		return null;
 	}
 
@@ -132,8 +132,10 @@ public class Program implements IAppLogic {
 
 	@Override
 	public void generateMockData() {
-		// TODO: Find out where to store users
-		
+        // TODO: Generate mcock data
+        try {
+            userService.registerUser("a@b.c", "ferda", "kulomet");
+        } catch (EmailAddressAlreadyUsedException e) {}
 	}
 
     // TODO

@@ -47,8 +47,10 @@ public class CategoryService implements ICategoryService {
     @Override
     public void updateCategory(int id, String title, Color color) {
         // WTF: ?
-        // TODO: Update category
-
+        IUser user = this.userService.getUserLoggedIn();
+        if(user != null) {
+            // TODO: Update category
+        }
     }
 
     @Override

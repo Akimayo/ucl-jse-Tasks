@@ -1,10 +1,18 @@
 package cz.mciesla.ucl.ui.cli.menu;
 
+import cz.mciesla.ucl.logic.app.entities.Category;
+import cz.mciesla.ucl.logic.app.entities.Tag;
+import cz.mciesla.ucl.logic.app.entities.Task;
 import cz.mciesla.ucl.ui.cli.forms.FormField;
 import cz.mciesla.ucl.ui.cli.menu.system.BackMenu;
 import cz.mciesla.ucl.ui.cli.menu.system.FillFormMenu;
 import cz.mciesla.ucl.ui.cli.menu.system.QuitMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.MainMenu;
+import cz.mciesla.ucl.ui.cli.menu.user.SettingsMenu;
+import cz.mciesla.ucl.ui.cli.menu.user.TasksMenu;
+import cz.mciesla.ucl.ui.cli.menu.user.ConfirmLogoutMenu;
+import cz.mciesla.ucl.ui.cli.menu.user.ListMenu;
+import cz.mciesla.ucl.ui.cli.menu.system.LogoutMenu;
 import cz.mciesla.ucl.ui.definition.IUserInterface;
 import cz.mciesla.ucl.ui.definition.forms.FormFieldType;
 import cz.mciesla.ucl.ui.definition.menu.IMenu;
@@ -76,5 +84,74 @@ public class MenuFactory implements IMenuFactory {
         };
     }
 
-    // TODO
+    @Override
+    public IMenu createTasksMenu(IMenu parentMenu, IUserInterface ui) {
+        return new TasksMenu(parentMenu, ui, "Úkoly");
+    }
+
+    @Override
+    public IMenu createTaskFormMenu(IMenu parentMenu, IUserInterface ui, Task task) {
+        return new FormMenu(parentMenu, "task", task == null ? "Vytvořit úkol" : "Upravit úkol") {
+            @Override
+            protected void build() {
+                IMenu backMenu = ui.getMenuFactory().createBackMenu(this);
+                IMenu fillMenu = ui.getMenuFactory().createFillFormMenu(this);
+
+                addOption(new MenuOption(nextOptionNumber(), backMenu));
+                addOption(new MenuOption(nextOptionNumber(), fillMenu));
+            }
+
+            @Override
+            protected void defineForm() {
+                addFormField(new FormField("title", "Název", FormFieldType.TEXTUAL));
+                addFormField(new FormField("note", "Poznámky", FormFieldType.TEXTUAL));
+                // TODO: Add more fields
+            }
+        };
+    }
+
+    @Override
+    public IMenu createCategoriesMenu(IMenu parentMenu, IUserInterface ui) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IMenu createCategoryFormMenu(IMenu parentMenu, IUserInterface ui, Category task) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IMenu createTagsMenu(IMenu parentMenu, IUserInterface ui) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IMenu createTagFormMenu(IMenu parentMenu, IUserInterface ui, Tag tag) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IMenu createSettingsMenu(IMenu parentMenu, IUserInterface ui) {
+        return new SettingsMenu(parentMenu, ui, "Nastavení");
+    }
+
+    @Override
+    public IMenu createLogoutMenu(IMenu parentMenu, IUserInterface ui) {
+        return new ConfirmLogoutMenu(parentMenu, ui, "Odhlásit se");
+    }
+
+    @Override
+    public <T> IMenu createListMenu(IMenu parentMenu, IUserInterface ui, String title, T[] entities) {
+        return new ListMenu<T>(parentMenu, ui, title, entities);
+    }
+
+    @Override
+    public IMenu createLogout(IMenu parentMenu) {
+        return new LogoutMenu(parentMenu, "Odhlásit se");
+    }
+
 }

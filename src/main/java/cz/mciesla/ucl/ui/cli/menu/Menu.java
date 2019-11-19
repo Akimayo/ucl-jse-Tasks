@@ -52,7 +52,11 @@ public abstract class Menu implements IMenu {
         }
     }
 
-    // TODO
+    protected void clearOptions() {
+        this.options.clear();
+        this.optionNumber = 0;
+    }
+
     @Override
     public IMenuOption getOptionForNumber(int optionNumber) {
         return this.options.stream().filter(i -> i.getNumber() == optionNumber).collect(Collectors.toList()).get(0);
