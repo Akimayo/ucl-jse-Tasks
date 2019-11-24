@@ -16,7 +16,7 @@ public class TasksMenu extends Menu {
 	@Override
 	protected void build() {
 		IMenu backMenu = ui.getMenuFactory().createBackMenu(this.parentMenu);
-        IMenu taskListMenu = ui.getMenuFactory().createListMenu(this, ui, "Seznam úkolů", this.logic.getAllTasks());
+        IMenu taskListMenu = ui.getMenuFactory().createListMenu(this, ui, "Seznam úkolů");
         IMenu newTaskMenu = ui.getMenuFactory().createTaskFormMenu(this, this.ui, null);
 
         addOption(new MenuOption(nextOptionNumber(), backMenu));
