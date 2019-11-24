@@ -103,6 +103,7 @@ public class MenuFactory implements IMenuFactory {
 
             @Override
             protected void defineForm() {
+                addFormField(new FormField("task", task == null ? "" : Integer.toString(task.getId()), FormFieldType.META));
                 addFormField(new FormField("title", "Název", FormFieldType.TEXTUAL));
                 addFormField(new FormField("note", "Poznámky", FormFieldType.TEXTUAL));
                 // TODO: Add more fields

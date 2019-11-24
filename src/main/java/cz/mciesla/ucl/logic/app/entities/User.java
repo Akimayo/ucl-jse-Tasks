@@ -39,14 +39,12 @@ public class User implements IUser, ITaskOwner {
 
     @Override
     public ITask getTask(int i) {
-        // WTF: ?
-        return this.tasks.get(i);
+        return this.tasks.stream().filter(t -> t.getId() == i).findFirst().get();
     }
 
     @Override
     public void saveTask(int i, ITask task) {
-        // WTF: ?
-        this.tasks.set(i, task);
+        this.tasks.set(this.tasks.indexOf(this.getTask(i)), task);
     }
 
     @Override
@@ -86,14 +84,12 @@ public class User implements IUser, ITaskOwner {
 
     @Override
     public ICategory getCategory(int i) {
-        // WTF: ?
-        return this.categories.get(i);
+        return this.categories.stream().filter(c -> c.getId() == i).findFirst().get();
     }
 
     @Override
     public void saveCategory(int i, ICategory category) {
-        // WTF:
-        this.categories.set(i, category);
+        this.categories.set(this.categories.indexOf(this.getCategory(i)), category);
     }
 
     @Override
@@ -113,14 +109,12 @@ public class User implements IUser, ITaskOwner {
 
     @Override
     public ITag getTag(int i) {
-        // WTF: ?
-        return this.tags.get(i);
+        return this.tags.stream().filter(g -> g.getId() == i).findFirst().get();
     }
 
     @Override
     public void saveTag(int i, ITag tag) {
-        // WTF: ?
-        this.tags.set(i, tag);
+        this.tags.set(this.tags.indexOf(this.getTag(i)), tag);
     }
 
     @Override

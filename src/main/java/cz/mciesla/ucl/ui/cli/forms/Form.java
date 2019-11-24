@@ -1,5 +1,6 @@
 package cz.mciesla.ucl.ui.cli.forms;
 
+import cz.mciesla.ucl.ui.definition.forms.FormFieldType;
 import cz.mciesla.ucl.ui.definition.forms.IForm;
 import cz.mciesla.ucl.ui.definition.forms.IFormField;
 import cz.mciesla.ucl.ui.definition.menu.IMenu;
@@ -20,6 +21,7 @@ public class Form implements IForm {
 
     @Override
     public String renderFormField(IFormField formField) {
+		if(formField.getType().equals(FormFieldType.META)) return "";
         return menu.getParentInterface().getFormView().formatFormField(formField);
     }
 

@@ -26,8 +26,9 @@ public class FormManager implements IFormManager {
 
     @Override
     public Map<String, String> processForm() {
-        // WTF: TODO
-
+        for(IFormField field : this.form.getFormFields()) {
+            this.processField(field);
+        }
         return new HashMap<>(data);
     }
 
@@ -38,7 +39,7 @@ public class FormManager implements IFormManager {
 
         do {
             isValid = true;
-            System.out.print(form.renderFormField(formField));
+            if(formField.getType() != FormFieldType.META) System.out.print(form.renderFormField(formField));
 
             try {
                 if (formField.getType() == FormFieldType.TEXTUAL) {
@@ -50,6 +51,8 @@ public class FormManager implements IFormManager {
                 } else if (formField.getType() == FormFieldType.SECURE) {
                     value = ui.promptSecureString();
                     value = processSecureInput(value, formField);
+                } else if (formField.getType() == FormFieldType.META) {
+                    value = formField.getTitle();
                 } else {
                     throw new RuntimeException("Form field type " + formField.getType() + " is not supported");
                 }

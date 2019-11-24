@@ -7,11 +7,14 @@ import cz.mciesla.ucl.logic.exceptions.NotLoggedInException;
 import cz.mciesla.ucl.ui.cli.forms.FormManager;
 import cz.mciesla.ucl.ui.cli.menu.MenuFactory;
 import cz.mciesla.ucl.ui.cli.views.*;
+import cz.mciesla.ucl.ui.definition.forms.FormFieldType;
 import cz.mciesla.ucl.ui.definition.forms.IForm;
 import cz.mciesla.ucl.ui.definition.forms.IFormField;
 import cz.mciesla.ucl.ui.definition.forms.IFormManager;
 import cz.mciesla.ucl.ui.definition.menu.IMenu;
 import cz.mciesla.ucl.logic.IAppLogic;
+import cz.mciesla.ucl.logic.app.entities.Task;
+import cz.mciesla.ucl.logic.app.entities.definition.ITask;
 import cz.mciesla.ucl.ui.definition.menu.IMenuFactory;
 import cz.mciesla.ucl.ui.definition.menu.IMenuOption;
 import cz.mciesla.ucl.ui.definition.views.*;
@@ -77,6 +80,7 @@ public class CLI implements ICLI {
 
     @Override
     public String promptString() {
+        // WTF: Y U NO WORK?!
         return this.sc.nextLine();
     }
 
@@ -104,6 +108,9 @@ public class CLI implements ICLI {
                 break;
             case "register":
                 actionRegister(fromMenu, formData);
+                break;
+            case "task":
+                actionTask(fromMenu, formData);
                 break;
         }
     }
@@ -143,6 +150,26 @@ public class CLI implements ICLI {
             drawMessage("Registrace proběhla úspěšně");
         } catch (EmailAddressAlreadyUsedException e) {
             drawError(e.getMessage());
+        }
+    }
+
+    private void actionTask(IMenu fromMenu, Map<String, String> formData) {
+        try {
+            ITask seTask;
+            if(formData.get("task").equals("")) {
+                seTask = new Task(formData.get("title"), formData.get("note"), null);
+                this.logic.getUserLoggedIn().addTask(seTask);
+                drawMessage("Úkol byl úspěšně vytvořen");
+            } else {
+                int sourceId = Integer.parseInt(formData.get("task"));
+                ITask sourceTask = this.logic.getUserLoggedIn().getTask(sourceId);
+                String title = formData.get("title").equals("") ? sourceTask.getTitle() : formData.get("title");
+                String note = formData.get("note").equals("") ? sourceTask.getNote() : formData.get("note");
+                this.logic.getUserLoggedIn().saveTask(sourceId, new Task(title, note, sourceTask.getCategory()));
+                drawMessage("Úkol byl úspěšně upraven");
+            }
+        } catch(NullPointerException e) {
+            drawError("Tento úkol již neexistue nebo byl uživatel odhlášen");
         }
     }
 
@@ -253,8 +280,14 @@ public class CLI implements ICLI {
     // endregion
 
     private Map<String, String> handleForm(IMenu currentMenu) {
+        // return this.createFormManagerForMenu(currentMenu).processForm();
+        /* Probably worthless now */
         Map<String, String> ret = new HashMap<String, String>();
         for (IFormField field : currentMenu.getFormFields()) {
+            if(field.getType() == FormFieldType.META) {
+                ret.put(field.getIdentifier(), field.getTitle());
+                continue;
+            }
             this.drawPrompt(field.getLabel());
             System.out.print(field.getTitle() + ": ");
             String in = null;
