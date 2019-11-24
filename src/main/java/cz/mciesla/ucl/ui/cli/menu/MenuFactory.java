@@ -146,8 +146,8 @@ public class MenuFactory implements IMenuFactory {
     }
 
     @Override
-    public <T> IMenu createListMenu(IMenu parentMenu, IUserInterface ui, String title, T[] entities) {
-        return new ListMenu<T>(parentMenu, ui, title, entities);
+    public <T> IMenu createListMenu(IMenu parentMenu, IUserInterface ui, String title) {
+        return new ListMenu<T>(parentMenu, ui, title);
     }
 
     @Override

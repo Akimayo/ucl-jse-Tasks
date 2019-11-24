@@ -26,6 +26,6 @@ public interface IMenuFactory {
     IMenu createSettingsMenu(IMenu parentMenu, IUserInterface iu);
     IMenu createLogoutMenu(IMenu parentMenu, IUserInterface ui);
 
-    <T> IMenu createListMenu(IMenu parentMenu, IUserInterface ui, String title, T[] entitites);
+    <T> IMenu createListMenu(IMenu parentMenu, IUserInterface ui, String title);
 	IMenu createLogout(IMenu parentMenu);
 }
