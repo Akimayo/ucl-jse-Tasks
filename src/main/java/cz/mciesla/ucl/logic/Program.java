@@ -132,7 +132,7 @@ public class Program implements IAppLogic {
 
 	@Override
 	public void generateMockData() {
-        // TODO: Generate mcock data
+        // TODO: Generate mock data
         try {
             userService.registerUser("a@b.c", "ferda", "kulomet");
         } catch (EmailAddressAlreadyUsedException e) {}

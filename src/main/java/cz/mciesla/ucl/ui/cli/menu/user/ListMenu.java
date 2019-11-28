@@ -51,9 +51,9 @@ public class ListMenu<T> extends Menu {
         IMenu detailMenu;
         for(T e : entities) {
             detailMenu = null;
-            if (e instanceof Task) detailMenu = ui.getMenuFactory().createTaskFormMenu(this, ui, (Task)e);
-            if (e instanceof Category) detailMenu = ui.getMenuFactory().createCategoryFormMenu(this, ui, (Category)e);
-            if (e instanceof Tag) detailMenu = ui.getMenuFactory().createTagFormMenu(this, ui, (Tag)e);
+            if (e instanceof Task) detailMenu = ui.getMenuFactory().createTaskDetailMenu(this, ui, (Task)e);
+            if (e instanceof Category) detailMenu = ui.getMenuFactory().createCategoryDetailMenu(this, ui, (Category)e);
+            if (e instanceof Tag) detailMenu = ui.getMenuFactory().createTagDetailMenu(this, ui, (Tag)e);
             if (detailMenu != null) addOption(new MenuOption(nextOptionNumber(), detailMenu));
         }
     }

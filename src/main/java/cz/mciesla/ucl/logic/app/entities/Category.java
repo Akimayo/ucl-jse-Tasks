@@ -27,7 +27,7 @@ public class Category implements ICategory {
     }
 
     private Stream<ITask> getUserTasksStream() {
-        return Stream.of(this.user.getTasks());
+        return Stream.of(this.user.getTasks()); // FIXME: Use UserService instead
     }
 
     @Override

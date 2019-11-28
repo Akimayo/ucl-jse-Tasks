@@ -27,7 +27,7 @@ public class Tag implements ITag {
     }
 
     private Stream<ITask> getUserTaskStream() {
-        return Stream.of(this.user.getTasks());
+        return Stream.of(this.user.getTasks()); // FIXME: Use UserService instead
     }
 
     @Override
