@@ -13,11 +13,15 @@ import cz.mciesla.ucl.ui.definition.menu.IMenu;
 
 public class ListMenu<T> extends Menu {
 
-    public ListMenu(IMenu parentMenu, IUserInterface ui, String title) {
+    private final Class<?> __type;
+
+    public ListMenu(Class<?> type, IMenu parentMenu, IUserInterface ui, String title) {
         super(parentMenu, "list_menu", title);
 
         this.logic = ui.getLogic();
         this.ui = ui;
+
+        this.__type = type;
     }
 
     @Override
@@ -29,15 +33,15 @@ public class ListMenu<T> extends Menu {
     @Override
     protected void build() {
         T[] entities = null;
-        if(this.getClass().getComponentType().equals(ITask.class)){
+        if(this.__type.equals(ITask.class)){
             entities = (T[])this.logic.getAllTasks();
             setDescription(String.format("Zobrazuji %d úkolů", entities.length));
         }
-        if(this.getClass().getComponentType().equals(ICategory.class)) {
+        if(this.__type.equals(ICategory.class)) {
             entities = (T[])this.logic.getAllCategories();
             setDescription(String.format("Zobrazuji %d kategorií", entities.length));
         }
-        if(this.getClass().getComponentType().equals(ITag.class)) {
+        if(this.__type.equals(ITag.class)) {
             entities = (T[])this.logic.getAllTags();
             setDescription(String.format("Zobrazuji %d značek", entities.length));
         }

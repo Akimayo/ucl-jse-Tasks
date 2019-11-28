@@ -94,7 +94,7 @@ public class MenuFactory implements IMenuFactory {
     }
 
     @Override
-    public <T> IMenu createListMenu(IMenu parentMenu, IUserInterface ui, String title) {
+    public <T> IMenu createListMenu(Class<?> task, IMenu parentMenu, IUserInterface ui, String title) {
         // TODO Auto-generated method stub
         return null;
     }

@@ -18,7 +18,7 @@ public interface IMenuFactory {
     IMenu createTaskFormMenu(IMenu parentMenu, IUserInterface ui, Task task);
 
     IMenu createCategoriesMenu(IMenu parentMenu, IUserInterface ui);
-    IMenu createCategoryFormMenu(IMenu parentMenu, IUserInterface ui, Category task);
+    IMenu createCategoryFormMenu(IMenu parentMenu, IUserInterface ui, Category category);
 
     IMenu createTagsMenu(IMenu parentMenu, IUserInterface ui);
     IMenu createTagFormMenu(IMenu parentMenu, IUserInterface ui, Tag tag);
@@ -26,6 +26,6 @@ public interface IMenuFactory {
     IMenu createSettingsMenu(IMenu parentMenu, IUserInterface iu);
     IMenu createLogoutMenu(IMenu parentMenu, IUserInterface ui);
 
-    <T> IMenu createListMenu(IMenu parentMenu, IUserInterface ui, String title);
+    <T> IMenu createListMenu(Class<?> type, IMenu parentMenu, IUserInterface ui, String title);
 	IMenu createLogout(IMenu parentMenu);
 }

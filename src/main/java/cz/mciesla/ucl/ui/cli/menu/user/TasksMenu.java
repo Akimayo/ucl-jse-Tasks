@@ -1,5 +1,6 @@
 package cz.mciesla.ucl.ui.cli.menu.user;
 
+import cz.mciesla.ucl.logic.app.entities.definition.ITask;
 import cz.mciesla.ucl.ui.cli.menu.Menu;
 import cz.mciesla.ucl.ui.cli.menu.MenuOption;
 import cz.mciesla.ucl.ui.definition.IUserInterface;
@@ -16,7 +17,7 @@ public class TasksMenu extends Menu {
 	@Override
 	protected void build() {
 		IMenu backMenu = ui.getMenuFactory().createBackMenu(this.parentMenu);
-        IMenu taskListMenu = ui.getMenuFactory().createListMenu(this, ui, "Seznam úkolů");
+        IMenu taskListMenu = ui.getMenuFactory().createListMenu(ITask.class, this, ui, "Seznam úkolů");
         IMenu newTaskMenu = ui.getMenuFactory().createTaskFormMenu(this, this.ui, null);
 
         addOption(new MenuOption(nextOptionNumber(), backMenu));

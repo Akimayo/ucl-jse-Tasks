@@ -9,7 +9,9 @@ import cz.mciesla.ucl.ui.cli.menu.system.FillFormMenu;
 import cz.mciesla.ucl.ui.cli.menu.system.QuitMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.MainMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.SettingsMenu;
+import cz.mciesla.ucl.ui.cli.menu.user.TagsMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.TasksMenu;
+import cz.mciesla.ucl.ui.cli.menu.user.CategoriesMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.ConfirmLogoutMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.ListMenu;
 import cz.mciesla.ucl.ui.cli.menu.system.LogoutMenu;
@@ -91,11 +93,11 @@ public class MenuFactory implements IMenuFactory {
 
     @Override
     public IMenu createTaskFormMenu(IMenu parentMenu, IUserInterface ui, Task task) {
-        return new FormMenu(parentMenu, "task", task == null ? "Vytvořit úkol" : "Upravit úkol") {
+        return new FormMenu(parentMenu, "task", task == null ? "Vytvořit úkol" : "> " + task.getTitle()) {
             @Override
             protected void build() {
-                IMenu backMenu = ui.getMenuFactory().createBackMenu(this);
-                IMenu fillMenu = ui.getMenuFactory().createFillFormMenu(this);
+                IMenu backMenu = ui.getMenuFactory().createBackMenu(parentMenu);
+                IMenu fillMenu = ui.getMenuFactory().createFillFormMenu(parentMenu);
 
                 addOption(new MenuOption(nextOptionNumber(), backMenu));
                 addOption(new MenuOption(nextOptionNumber(), fillMenu));
@@ -113,26 +115,54 @@ public class MenuFactory implements IMenuFactory {
 
     @Override
     public IMenu createCategoriesMenu(IMenu parentMenu, IUserInterface ui) {
-        // TODO Auto-generated method stub
-        return null;
+        return new CategoriesMenu(parentMenu, ui, "Kategorie");
     }
 
     @Override
-    public IMenu createCategoryFormMenu(IMenu parentMenu, IUserInterface ui, Category task) {
-        // TODO Auto-generated method stub
-        return null;
+    public IMenu createCategoryFormMenu(IMenu parentMenu, IUserInterface ui, Category category) {
+        return new FormMenu(parentMenu, "category", category == null ? "Vytvořit kategorii" : "Upravit kategorii") {
+
+            @Override
+            protected void build() {
+                IMenu backMenu = ui.getMenuFactory().createBackMenu(parentMenu);
+                IMenu fillMenu = ui.getMenuFactory().createFillFormMenu(parentMenu);
+
+                addOption(new MenuOption(nextOptionNumber(), backMenu));
+                addOption(new MenuOption(nextOptionNumber(), fillMenu));
+            }
+
+            @Override
+            protected void defineForm() {
+                addFormField(new FormField("title", "Název", FormFieldType.TEXTUAL));
+                addFormField(new FormField("color", "Barva", FormFieldType.TEXTUAL)); // FIXME: Create new field type for colors
+            }
+        };
     }
 
     @Override
     public IMenu createTagsMenu(IMenu parentMenu, IUserInterface ui) {
-        // TODO Auto-generated method stub
-        return null;
+        return new TagsMenu(parentMenu, ui, "Značky");
     }
 
     @Override
     public IMenu createTagFormMenu(IMenu parentMenu, IUserInterface ui, Tag tag) {
-        // TODO Auto-generated method stub
-        return null;
+        return new FormMenu(parentMenu, "tag", tag == null ? "Vytvořit značku" : "Upravit značku") {
+
+            @Override
+            protected void build() {
+                IMenu backMenu = ui.getMenuFactory().createBackMenu(parentMenu);
+                IMenu fillMenu = ui.getMenuFactory().createFillFormMenu(parentMenu);
+
+                addOption(new MenuOption(nextOptionNumber(), backMenu));
+                addOption(new MenuOption(nextOptionNumber(), fillMenu));
+            }
+
+            @Override
+            protected void defineForm() {
+                addFormField(new FormField("title", "Název", FormFieldType.TEXTUAL));
+                addFormField(new FormField("color", "Barva", FormFieldType.TEXTUAL)); // FIXME: Create new field type for colors
+            }
+        };
     }
 
     @Override
@@ -146,8 +176,8 @@ public class MenuFactory implements IMenuFactory {
     }
 
     @Override
-    public <T> IMenu createListMenu(IMenu parentMenu, IUserInterface ui, String title) {
-        return new ListMenu<T>(parentMenu, ui, title);
+    public <T> IMenu createListMenu(Class<?> type, IMenu parentMenu, IUserInterface ui, String title) {
+        return new ListMenu<T>(type, parentMenu, ui, title);
     }
 
     @Override
