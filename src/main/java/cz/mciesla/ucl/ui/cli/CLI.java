@@ -115,9 +115,10 @@ public class CLI implements ICLI {
         }
     }
 
+
     public void invokeAppLogic(IMenu fromMenu) {
         switch (fromMenu.getIdentifier()) {
-        case "main_menu":
+            case "main_menu":
             actionDashboard(fromMenu);
             break;
         // TODO: Add all other app logics
