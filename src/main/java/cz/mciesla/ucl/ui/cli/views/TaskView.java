@@ -1,9 +1,16 @@
 package cz.mciesla.ucl.ui.cli.views;
 
+import java.time.format.DateTimeFormatter;
+
 import cz.mciesla.ucl.logic.app.entities.definition.ITask;
 import cz.mciesla.ucl.ui.definition.views.ITaskView;
 
 public class TaskView implements ITaskView {
+    private DateTimeFormatter format;
+
+    public TaskView() {
+        this.format = DateTimeFormatter.ofPattern("dd. MM. YYYY HH:mm:ss");
+    }
 
     @Override
     public String formatTaskList(ITask[] taskList) {
@@ -16,26 +23,29 @@ public class TaskView implements ITaskView {
 
     @Override
     public String formatTask(ITask task) {
-        String ret = task.getNote() + System.lineSeparator() + "    Kategorie";
+        StringBuilder ret = new StringBuilder("= " + task.getNote() + " =" + System.lineSeparator() + System.lineSeparator());
+        ret.append("Vytvořeno: ").append(task.getCreatedAt().format(this.format)).append(System.lineSeparator());
+        ret.append(" Upraveno: ").append(task.getUpdatedAt().format(this.format)).append(System.lineSeparator());
+        ret.append("    Kategorie");
         int catLength;
         if (task.getCategory() == null) catLength = 0;
         else catLength = task.getCategory().getTitle().length();
         for (int i = 0; i < 16 - catLength; i++)
-            ret += " ";
-        ret += "Značky";
+            ret.append(" ");
+        ret.append("Značky");
         for (int i = 0; i < task.getTags().length; i++) {
-            ret += System.lineSeparator() + "    ";
+            ret.append(System.lineSeparator()).append("    ");
             if (i == 0) {
-                ret += task.getCategory().getTitle();
+                ret.append(task.getCategory().getTitle());
                 for (int j = 0; j < 16 - catLength; j++)
-                    ret += " ";
+                    ret.append(" ");
             } else {
                 for (int j = 0; j < 16; j++)
-                    ret += " ";
+                    ret.append(" ");
             }
-            ret += task.getTags()[i].getTitle();
+            ret.append(task.getTags()[i].getTitle());
         }
-        return ret;
+        return ret.toString();
     }
 
 }

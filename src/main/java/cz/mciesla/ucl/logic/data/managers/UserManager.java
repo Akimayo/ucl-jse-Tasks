@@ -7,6 +7,7 @@ import cz.mciesla.ucl.logic.data.mappers.MapperFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public class UserManager implements IUserManager {
@@ -28,11 +29,13 @@ public class UserManager implements IUserManager {
 
     @Override
     public IUser getUserByEmail(String email) {
-        return this.getFirstUserFromDAOStream(userDatabase.stream().filter(i -> i.getEmail() == email));
+        return this.getFirstUserFromDAOStream(userDatabase.stream().filter(i -> i.getEmail().equals(email)));
     }
 
     private IUser getFirstUserFromDAOStream(Stream<UserDAO> stream) {
-        return mappers.getUserMapper().mapFromDAODeep(stream.findFirst().get());
+        Optional<UserDAO> first = stream.findFirst();
+        if(first.isPresent()) return mappers.getUserMapper().mapFromDAODeep(first.get());
+        return null;
     }
 
     @Override

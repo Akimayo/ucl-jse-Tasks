@@ -14,9 +14,6 @@ import cz.mciesla.ucl.ui.definition.forms.IFormField;
 import cz.mciesla.ucl.ui.definition.forms.IFormManager;
 import cz.mciesla.ucl.ui.definition.menu.IMenu;
 import cz.mciesla.ucl.logic.IAppLogic;
-import cz.mciesla.ucl.logic.app.entities.Category;
-import cz.mciesla.ucl.logic.app.entities.Tag;
-import cz.mciesla.ucl.logic.app.entities.Task;
 import cz.mciesla.ucl.logic.app.entities.definition.Color;
 import cz.mciesla.ucl.logic.app.entities.definition.ICategory;
 import cz.mciesla.ucl.logic.app.entities.definition.ITag;
@@ -167,17 +164,12 @@ public class CLI implements ICLI {
 
     private void actionTask(IMenu fromMenu, Map<String, String> formData) {
         try {
-            ITask seTask;
             if (formData.get("task").equals("")) {
-                seTask = new Task(formData.get("title"), formData.get("note"), null);
-                this.logic.getUserLoggedIn().addTask(seTask);
+                this.logic.createTask(formData.get("title"), formData.get("note"), null); // FIXME: Category selection
                 drawMessage("Úkol byl úspěšně vytvořen");
             } else {
                 int sourceId = Integer.parseInt(formData.get("task"));
-                ITask sourceTask = this.logic.getUserLoggedIn().getTask(sourceId);
-                String title = formData.get("title").equals("") ? sourceTask.getTitle() : formData.get("title");
-                String note = formData.get("note").equals("") ? sourceTask.getNote() : formData.get("note");
-                this.logic.getUserLoggedIn().saveTask(sourceId, new Task(title, note, sourceTask.getCategory()));
+                this.logic.updateTask(sourceId, formData.get("title"), formData.get("note"), null); // FIXME: Cateogory selection
                 drawMessage("Úkol byl úspěšně upraven");
             }
         } catch (NullPointerException e) {
@@ -187,18 +179,12 @@ public class CLI implements ICLI {
 
     private void actionTag(IMenu fromMenu, Map<String, String> formData) {
         try {
-            ITag seTag;
             if (formData.get("tag").equals("")) {
-                seTag = new Tag(formData.get("title"), Color.values()[Integer.parseInt(formData.get("color"))]);
-                this.logic.getUserLoggedIn().addTag(seTag);
+                this.logic.createTag(formData.get("title"), Color.values()[Integer.parseInt(formData.get("color"))]); // TODO: Improve color selection
                 drawMessage("Značka byla úspěšně vytvořena");
             } else {
                 int sourceId = Integer.parseInt(formData.get("tag"));
-                ITag sourceTag = this.logic.getUserLoggedIn().getTag(sourceId);
-                String title = formData.get("title").equals("") ? sourceTag.getTitle() : formData.get("title");
-                Color color = formData.get("color").equals("") ? sourceTag.getColor()
-                        : Color.values()[Integer.parseInt(formData.get("color"))];
-                this.logic.getUserLoggedIn().saveTag(sourceId, new Tag(title, color));
+                this.logic.updateTag(sourceId, formData.get("title"), null); // FIXME: Color selection
                 drawMessage("Značka byla úspěšně uložena");
             }
         } catch (NullPointerException e) {
@@ -208,19 +194,13 @@ public class CLI implements ICLI {
 
     private void actionCategory(IMenu fromMenu, Map<String, String> formData) {
         try {
-            ICategory seCategory;
             if (formData.get("category").equals("")) {
-                seCategory = new Category(formData.get("title"),
-                        Color.values()[Integer.parseInt(formData.get("color"))]);
-                this.logic.getUserLoggedIn().addCategory(seCategory);
+                this.logic.createCategory(formData.get("title"),
+                        Color.values()[Integer.parseInt(formData.get("color"))]); // TODO: Improve color selection
                 drawMessage("Kategorie byla úspěšně vytvořena");
             } else {
                 int sourceId = Integer.parseInt(formData.get("category"));
-                ICategory sourceCategory = this.logic.getUserLoggedIn().getCategory(sourceId);
-                String title = formData.get("title").equals("") ? sourceCategory.getTitle() : formData.get("title");
-                Color color = formData.get("color").equals("") ? sourceCategory.getColor()
-                        : Color.values()[Integer.parseInt(formData.get("color"))];
-                this.logic.getUserLoggedIn().saveCategory(sourceId, new Category(title, color));
+                this.logic.updateCategory(sourceId, formData.get("title"), null); // FIXME: Color selection
                 drawMessage("Kategorie byla úsěšně uložena");
             }
         } catch (NullPointerException e) {
@@ -327,9 +307,9 @@ public class CLI implements ICLI {
         case SYSTEM_DESTROY:
             try {
                 DestroyEntityMenu<?> menu = (DestroyEntityMenu<?>)nextMenu;
-                if(menu.getEntity() instanceof ITask) this.logic.getUserLoggedIn().saveTask(((ITask)menu).getId(), null);
-                if(menu.getEntity() instanceof ICategory) this.logic.getUserLoggedIn().saveCategory(((ICategory)menu).getId(), null);
-                if(menu.getEntity() instanceof ITag) this.logic.getUserLoggedIn().saveTag(((ITag)menu).getId(), null);
+                if(menu.getEntity() instanceof ITask) this.logic.destroyTask(((ITask)menu.getEntity()).getId());;
+                if(menu.getEntity() instanceof ICategory) this.logic.destroyCategory(((ICategory)menu.getEntity()).getId());
+                if(menu.getEntity() instanceof ITag) this.logic.destroyCategory(((ITag)menu.getEntity()).getId());
             } catch (NullPointerException e) {
                 drawError(e.getMessage());
             } finally {

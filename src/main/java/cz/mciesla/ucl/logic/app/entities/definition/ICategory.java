@@ -9,6 +9,8 @@ public interface ICategory extends ITaskOwner {
     Color getColor();
 	LocalDateTime getCreatedAt();
 	LocalDateTime getUpdatedAt();
+	void setColor(Color color);
+	void setTitle(String title);
 
     // see ITaskOwner
 }

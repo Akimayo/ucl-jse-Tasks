@@ -9,6 +9,8 @@ public interface ITag extends ITaskOwner {
     Color getColor();
 	LocalDateTime getCreatedAt();
 	LocalDateTime getUpdatedAt();
+	void setTitle(String title);
+	void setColor(Color color);
 
     // see ITaskOwner
 }

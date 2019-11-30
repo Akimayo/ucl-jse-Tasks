@@ -9,6 +9,9 @@ import cz.mciesla.ucl.logic.app.services.CategoryService;
 import cz.mciesla.ucl.logic.app.services.TagService;
 import cz.mciesla.ucl.logic.app.services.TaskService;
 import cz.mciesla.ucl.logic.app.services.UserService;
+import cz.mciesla.ucl.logic.app.services.definition.TasksOrder;
+import cz.mciesla.ucl.logic.data.managers.ManagerFactory;
+import cz.mciesla.ucl.logic.data.mappers.MapperFactory;
 import cz.mciesla.ucl.logic.exceptions.AlreadyLoggedInException;
 import cz.mciesla.ucl.logic.exceptions.EmailAddressAlreadyUsedException;
 import cz.mciesla.ucl.logic.exceptions.InvalidCredentialsException;
@@ -29,7 +32,7 @@ public class Program implements IAppLogic {
     private UserService userService;
 
     public Program() {
-        userService = new UserService();
+        userService = new UserService(new ManagerFactory(new MapperFactory()));
         categoryService = new CategoryService(userService);
         tagService = new TagService(userService);
         taskService = new TaskService(userService);
@@ -133,12 +136,92 @@ public class Program implements IAppLogic {
 
     @Override
     public void generateMockData() {
-        // TODO: Generate mock data
         try {
             userService.registerUser("a@b.c", "ferda", "kulomet");
             userService.loginUser("a@b.c", "kulomet");
+            // TODO: Generate mock data
         } catch (EmailAddressAlreadyUsedException | AlreadyLoggedInException | InvalidCredentialsException e) {
         }
+    }
+
+    @Override
+    public ITask[] getAllTasks(TasksOrder order) {
+        return this.taskService.getAllTasks(order);
+    }
+
+    @Override
+    public ITask[] searchTasksForKeyword(String keyword) {
+        return this.taskService.searchTasksForKeyword(keyword);
+    }
+
+    @Override
+    public ITask[] getAllTasksByCategory(ICategory category) {
+        return this.taskService.getAllTasksByCategory(category);
+    }
+
+    @Override
+    public ITask[] getAllTasksByTag(ITag tag) {
+        return this.taskService.getAllTasksByTag(tag);
+    }
+
+    @Override
+    public ITask[] getAllTasksByTags(ITag[] tag) {
+        return this.taskService.getAllTasksByTags(tag);
+    }
+
+    @Override
+    public ITask[] getAllTasksByTags(ITag[] tag, ICategory category) {
+        return this.taskService.getAllTasksByTags(tag, category);
+    }
+
+    @Override
+    public void createTask(String title) {
+        this.taskService.createTask(title);
+    }
+
+    @Override
+    public void createTask(String title, String note) {
+        this.taskService.createTask(title, note);
+    }
+
+    @Override
+    public void createTask(String title, String note, ICategory category) {
+        this.taskService.createTask(title, note, category);
+    }
+
+    @Override
+    public void updateTask(int id, String title, String note, ICategory category) {
+        this.taskService.updateTask(id, title, note, category);
+    }
+
+    @Override
+    public void destroyTask(int id) {
+        this.taskService.destroyTask(id);
+    }
+
+    @Override
+    public ITag getTagById(int id) {
+        return this.tagService.getTagById(id);
+    }
+
+    @Override
+    public void createTag(String title) {
+        this.tagService.createTag(title);
+    }
+
+    @Override
+    public void createTag(String title, Color color) {
+        this.tagService.createTag(title, color);
+    }
+
+    @Override
+    public void updateTag(int id, String title, Color color) {
+        this.tagService.updateTag(id, title, color);
+    }
+
+    @Override
+    public void destroyTag(int id) {
+        this.tagService.destroyTag(id);
     }
 
 }

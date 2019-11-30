@@ -1,6 +1,5 @@
 package cz.mciesla.ucl.logic.app.services.definition;
 
-import cz.mciesla.ucl.logic.app.entities.definition.Color;
 import cz.mciesla.ucl.logic.app.entities.definition.ICategory;
 import cz.mciesla.ucl.logic.app.entities.definition.ITag;
 import cz.mciesla.ucl.logic.app.entities.definition.ITask;
@@ -44,7 +43,7 @@ public interface ITaskService {
     void createTask(String title, String note, ICategory category);
 
     /** Finds a task by its ID and updates it */
-    void updateTask(int id, String title, Color color);
+    void updateTask(int id, String title, String note, ICategory category);
 
     /** Finds a task by its ID and destroys it */
     void destroyTask(int id);

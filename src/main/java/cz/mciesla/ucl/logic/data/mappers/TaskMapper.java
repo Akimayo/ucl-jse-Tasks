@@ -24,7 +24,8 @@ public class TaskMapper implements ITaskMapper {
     @Override
     public ITask mapFromDAOShallow(TaskDAO dao) {
         IUser userEntity = factory.getUserMapper().mapFromDAOShallow(dao.getUser());
-        ICategory categoryEntity = factory.getCategoryMapper().mapFromDAOShallow(dao.getCategory());
+        ICategory categoryEntity = null;
+        if(dao.getCategory() != null) categoryEntity = factory.getCategoryMapper().mapFromDAOShallow(dao.getCategory());
         ITask taskEntity = new Task(userEntity, dao.getId(), dao.getTitle(), dao.getNote(), categoryEntity, dao.getCreatedAt(), dao.getUpdatedAt());
         return taskEntity;
     }

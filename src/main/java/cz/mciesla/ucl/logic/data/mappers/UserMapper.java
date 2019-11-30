@@ -24,9 +24,7 @@ public class UserMapper implements IUserMapper {
 
     @Override
     public IUser mapFromDAOShallow(UserDAO dao) {
-        IUser userEntity = new User(dao.getId(), dao.getEmail(), dao.getUsername(), dao.getPassword(), dao.getCreatedAt(), dao.getUpdatedAt());
-
-        return userEntity;
+        return new User(dao.getId(), dao.getEmail(), dao.getUsername(), dao.getPassword(), dao.getCreatedAt(), dao.getUpdatedAt());
     }
 
     @Override

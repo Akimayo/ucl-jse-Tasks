@@ -13,6 +13,11 @@ import cz.mciesla.ucl.logic.app.entities.definition.IUser;
  * Task
  */
 public class Task implements ITask {
+    private static int idCounter = 1;
+
+    public static void setLastId(int lastId) {
+        idCounter = lastId;
+    }
 
     private int id;
     private String title;
@@ -27,22 +32,25 @@ public class Task implements ITask {
     private int tagsCountCache;
     private boolean tagsCountCacheChanged;
 
-    public Task(String title, String note, ICategory category) {
+    public Task(IUser user, String title, String note, ICategory category) {
+        this.user = user;
         this.title = title;
         this.note = note;
         this.category = category;
         this.tags = new ArrayList<>();
 
         this.tagsCountCacheChanged = true;
+
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+
+        this.id = ++idCounter;
     }
 
     public Task(IUser userEntity, int id, String title, String note, ICategory category, LocalDateTime createdAt,
             LocalDateTime updatedAt) {
-        this.user = userEntity;
+        this(userEntity, title, note, category);
         this.id = id;
-        this.title = title;
-        this.note = note;
-        this.category = category;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -127,6 +135,24 @@ public class Task implements ITask {
     @Override
     public void reopen() {
         this.done = false;
+    }
+
+    @Override
+    public void setTitle(String title) {
+        this.title = title;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @Override
+    public void setNote(String note) {
+        this.note = note;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @Override
+    public void setCategory(ICategory category) {
+        this.category = category;
+        this.updatedAt = LocalDateTime.now();
     }
 
 }

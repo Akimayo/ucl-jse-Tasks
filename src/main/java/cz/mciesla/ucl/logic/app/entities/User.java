@@ -14,6 +14,11 @@ import cz.mciesla.ucl.logic.app.entities.definition.IUser;
  * User
  */
 public class User implements IUser, ITaskOwner {
+    private static int idCounter = 1;
+
+    public static void setLastId(int lastId) {
+        idCounter = lastId;
+    }
 
     private List<ITask> tasks;
     private int id;
@@ -33,13 +38,17 @@ public class User implements IUser, ITaskOwner {
         this.tasks = new ArrayList<>();
         this.categories = new ArrayList<>();
         this.tags = new ArrayList<>();
+
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+
+        this.id = ++idCounter;
     }
 
     public User(int id, String email, String username, String password, LocalDateTime createdAt,
             LocalDateTime updatedAt) {
+        this(email, username, password);
         this.id = id;
-        this.email = email;
-        this.username = username;
         this.password = password;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;

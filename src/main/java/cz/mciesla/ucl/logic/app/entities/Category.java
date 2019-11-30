@@ -12,6 +12,12 @@ import cz.mciesla.ucl.logic.app.entities.definition.IUser;
  * Category
  */
 public class Category implements ICategory {
+    private static int idCounter = 1;
+
+    public static void setLastId(int lastId) {
+        idCounter = lastId;
+    }
+
     private int id;
     private IUser user;
     private String title;
@@ -22,18 +28,23 @@ public class Category implements ICategory {
     private int tasksCountCache;
     private boolean tasksCountCacheChanged;
 
-    public Category(String title, Color color) {
+    public Category(IUser user, String title, Color color) {
+        this.user = user;
         this.title = title;
         this.color = color;
 
         this.tasksCountCacheChanged = true;
+
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+
+        this.id = ++idCounter;
     }
 
     public Category(IUser userEntity, int id, String title, Color color, LocalDateTime createdAt,
             LocalDateTime updatedAt) {
-        this.user = userEntity;
+        this(userEntity, title, color);
         this.id = id;
-        this.color = color;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -98,5 +109,17 @@ public class Category implements ICategory {
     @Override
     public LocalDateTime getUpdatedAt() {
         return this.updatedAt;
+    }
+
+    @Override
+    public void setColor(Color color) {
+        this.color = color;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @Override
+    public void setTitle(String title) {
+        this.title = title;
+        this.updatedAt = LocalDateTime.now();
     }
 }

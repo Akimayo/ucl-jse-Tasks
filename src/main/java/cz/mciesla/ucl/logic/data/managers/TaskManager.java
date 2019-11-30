@@ -26,8 +26,8 @@ public class TaskManager implements ITaskManager {
 
     @Override
     public ITask[] getAllTasksForUser(IUser user) {
-        return (ITask[]) this.getDAOsForUserLoggedIn(user).stream().map(i -> mappers.getTaskMapper().mapFromDAODeep(i))
-                .toArray();
+        return this.getDAOsForUserLoggedIn(user).stream().map(i -> mappers.getTaskMapper().mapFromDAODeep(i))
+                .toArray(ITask[]::new);
     }
 
     private List<TaskDAO> getDAOsForUserLoggedIn(IUser user) {

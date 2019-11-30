@@ -23,10 +23,7 @@ public class CategoryMapper implements ICategoryMapper {
     @Override
     public ICategory mapFromDAOShallow(CategoryDAO dao) {
         IUser userEntity = factory.getUserMapper().mapFromDAOShallow(dao.getUser());
-
-        ICategory categoryEntity = new Category(userEntity, dao.getId(), dao.getTitle(), dao.getColor(), dao.getCreatedAt(), dao.getUpdatedAt());
-
-        return categoryEntity;
+        return new Category(userEntity, dao.getId(), dao.getTitle(), dao.getColor(), dao.getCreatedAt(), dao.getUpdatedAt());
     }
 
     @Override

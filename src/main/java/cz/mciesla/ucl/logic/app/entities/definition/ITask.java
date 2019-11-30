@@ -38,4 +38,10 @@ public interface ITask {
 
     void reopen();
     //endregion
+
+	void setTitle(String title);
+
+	void setNote(String note);
+
+	void setCategory(ICategory category);
 }

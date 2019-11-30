@@ -3,12 +3,14 @@ package cz.mciesla.ucl.logic;
 import cz.mciesla.ucl.logic.app.entities.definition.ITag;
 import cz.mciesla.ucl.logic.app.entities.definition.ITask;
 import cz.mciesla.ucl.logic.app.services.definition.ICategoryService;
+import cz.mciesla.ucl.logic.app.services.definition.ITagService;
+import cz.mciesla.ucl.logic.app.services.definition.ITaskService;
 import cz.mciesla.ucl.logic.app.services.definition.IUserService;
 
 /**
  * Everything which is shown (or done) by the AppLogic, has to be related only to the logged in user
  */
-public interface IAppLogic extends ICategoryService, IUserService {
+public interface IAppLogic extends ICategoryService, IUserService, ITaskService, ITagService {
     //region Tasks
     /** Returns one task by its ID */
     ITask getTaskById(int id);

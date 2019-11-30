@@ -12,6 +12,12 @@ import cz.mciesla.ucl.logic.app.entities.definition.IUser;
  * Tag
  */
 public class Tag implements ITag {
+    private static int idCounter = 1;
+
+    public static void setLastId(int lastId) {
+        idCounter = lastId;
+    }
+
     private int id;
     private IUser user;
     private String title;
@@ -22,11 +28,17 @@ public class Tag implements ITag {
     private int tasksCountCache;
     private boolean tasksCountCacheChanged;
 
-    public Tag(String title, Color color) {
+    public Tag(IUser user, String title, Color color) {
+        this.user = user;
         this.title = title;
         this.color = color;
 
         this.tasksCountCacheChanged = true;
+
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+
+        this.id = ++idCounter;
     }
 
     public Tag(IUser userEntity, int id, String title, Color color, LocalDateTime createdAt, LocalDateTime updatedAt) {
@@ -101,6 +113,18 @@ public class Tag implements ITag {
     @Override
     public LocalDateTime getUpdatedAt() {
         return this.updatedAt;
+    }
+
+    @Override
+    public void setTitle(String title) {
+        this.title = title;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @Override
+    public void setColor(Color color) {
+        this.color = color;
+        this.updatedAt = LocalDateTime.now();
     }
 
 }
