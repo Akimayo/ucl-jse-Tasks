@@ -4,8 +4,6 @@ import cz.mciesla.ucl.ui.definition.forms.FormFieldType;
 import cz.mciesla.ucl.ui.definition.forms.IFormField;
 
 public class FormField implements IFormField {
-    // TODO
-
     private String identifier;
     private String title;
     private String label;
@@ -49,5 +47,4 @@ public class FormField implements IFormField {
         return required;
     }
 
-    // TODO
 }

@@ -17,8 +17,6 @@ public class Form implements IForm {
         this.fields = new ArrayList<>();
     }
 
-    // TODO
-
     @Override
     public String renderFormField(IFormField formField) {
 		if(formField.getType().equals(FormFieldType.META)) return "";

@@ -6,13 +6,13 @@ import cz.mciesla.ucl.logic.data.managers.definition.IUserManager;
 import cz.mciesla.ucl.logic.data.mappers.MapperFactory;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Stream;
 
 public class UserManager implements IUserManager {
     private List<UserDAO> userDatabase;
     private MapperFactory mappers;
+    @SuppressWarnings("unused")
     private ManagerFactory managers;
 
     public UserManager(ManagerFactory managers, MapperFactory mappers) {
@@ -23,39 +23,38 @@ public class UserManager implements IUserManager {
 
     @Override
     public IUser[] getAllUsers() {
-        // TODO Auto-generated method stub
-        return null;
+        return (IUser[]) userDatabase.stream().map(i -> mappers.getUserMapper().mapFromDAODeep(i)).toArray();
     }
 
     @Override
     public IUser getUserByEmail(String email) {
-        // TODO Auto-generated method stub
-        return null;
+        return this.getFirstUserFromDAOStream(userDatabase.stream().filter(i -> i.getEmail() == email));
+    }
+
+    private IUser getFirstUserFromDAOStream(Stream<UserDAO> stream) {
+        return mappers.getUserMapper().mapFromDAODeep(stream.findFirst().get());
     }
 
     @Override
     public IUser getUserById(int userId) {
-        // TODO Auto-generated method stub
-        return null;
+        return this.getFirstUserFromDAOStream(userDatabase.stream().filter(i -> i.getId() == userId));
     }
 
     @Override
     public void createUser(IUser user) {
-        // TODO Auto-generated method stub
-
+        UserDAO dao = mappers.getUserMapper().mapToDAODeep(user);
+        userDatabase.add(dao);
     }
 
     @Override
     public void updateUser(IUser user) {
-        // TODO Auto-generated method stub
-
+        UserDAO newDao = mappers.getUserMapper().mapToDAODeep(user);
+        userDatabase.set(userDatabase.indexOf(userDatabase.stream().filter(i -> i.getId() == user.getId()).findFirst().get()), newDao);
     }
 
     @Override
     public void deleteUserById(int userId) {
-        // TODO Auto-generated method stub
-
+        userDatabase.remove(userDatabase.indexOf(userDatabase.stream().filter(i -> i.getId() == userId).findFirst().get()));
     }
 
-    // TODO
 }

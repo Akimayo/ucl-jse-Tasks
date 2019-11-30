@@ -1,6 +1,6 @@
 package cz.mciesla.ucl.logic.app.entities.definition;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public interface ITask {
     //region Getters
@@ -16,9 +16,9 @@ public interface ITask {
 
     ICategory getCategory();
 
-    Date getCreatedAt();
+    LocalDateTime getCreatedAt();
 
-    Date getUpdatedAt();
+    LocalDateTime getUpdatedAt();
     //endregion
 
     //region Tags

@@ -1,7 +1,7 @@
 package cz.mciesla.ucl.logic.app.entities;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import cz.mciesla.ucl.logic.app.entities.definition.ICategory;
@@ -14,14 +14,14 @@ import cz.mciesla.ucl.logic.app.entities.definition.IUser;
  */
 public class Task implements ITask {
 
-    private int id; // TODO: Missing ID (Hibernate)
+    private int id;
     private String title;
     private String note;
     private IUser user;
     private boolean done;
     private ICategory category;
-    private Date createdAt;
-    private Date updatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     private List<ITag> tags;
 
     private int tagsCountCache;
@@ -34,6 +34,17 @@ public class Task implements ITask {
         this.tags = new ArrayList<>();
 
         this.tagsCountCacheChanged = true;
+    }
+
+    public Task(IUser userEntity, int id, String title, String note, ICategory category, LocalDateTime createdAt,
+            LocalDateTime updatedAt) {
+        this.user = userEntity;
+        this.id = id;
+        this.title = title;
+        this.note = note;
+        this.category = category;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     @Override
@@ -67,12 +78,12 @@ public class Task implements ITask {
     }
 
     @Override
-    public Date getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return this.createdAt;
     }
 
     @Override
-    public Date getUpdatedAt() {
+    public LocalDateTime getUpdatedAt() {
         return this.updatedAt;
     }
 

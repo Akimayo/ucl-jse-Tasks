@@ -1,5 +1,6 @@
 package cz.mciesla.ucl.logic.app.entities;
 
+import java.time.LocalDateTime;
 import java.util.stream.Stream;
 
 import cz.mciesla.ucl.logic.app.entities.definition.Color;
@@ -15,6 +16,8 @@ public class Tag implements ITag {
     private IUser user;
     private String title;
     private Color color;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     private int tasksCountCache;
     private boolean tasksCountCacheChanged;
@@ -26,13 +29,23 @@ public class Tag implements ITag {
         this.tasksCountCacheChanged = true;
     }
 
+    public Tag(IUser userEntity, int id, String title, Color color, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.user = userEntity;
+        this.id = id;
+        this.title = title;
+        this.color = color;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
     private Stream<ITask> getUserTaskStream() {
         return Stream.of(this.user.getTasks()); // FIXME: Use UserService instead
     }
 
     @Override
     public ITask[] getTasks() {
-        return (ITask[])this.getUserTaskStream().filter(i -> Stream.of(i.getTags()).anyMatch(t -> t.equals(this))).toArray();
+        return (ITask[]) this.getUserTaskStream().filter(i -> Stream.of(i.getTags()).anyMatch(t -> t.equals(this)))
+                .toArray();
     }
 
     @Override
@@ -54,7 +67,7 @@ public class Tag implements ITag {
 
     @Override
     public int tasksCount() {
-        if(this.tasksCountCacheChanged)
+        if (this.tasksCountCacheChanged)
             this.tasksCountCache = this.getTasks().length;
         this.tasksCountCacheChanged = false;
         return this.tasksCountCache;
@@ -78,6 +91,16 @@ public class Tag implements ITag {
     @Override
     public Color getColor() {
         return this.color;
+    }
+
+    @Override
+    public LocalDateTime getCreatedAt() {
+        return this.createdAt;
+    }
+
+    @Override
+    public LocalDateTime getUpdatedAt() {
+        return this.updatedAt;
     }
 
 }

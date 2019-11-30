@@ -6,6 +6,7 @@ import cz.mciesla.ucl.logic.data.dao.TaskDAO;
 import cz.mciesla.ucl.logic.data.managers.definition.ITaskManager;
 import cz.mciesla.ucl.logic.data.mappers.MapperFactory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ public class TaskManager implements ITaskManager {
     /** Keys in the map will be emails of user who owns the task */
     private Map<String, List<TaskDAO>> taskDatabase;
     private MapperFactory mappers;
+    @SuppressWarnings("unused")
     private ManagerFactory managers;
 
     public TaskManager(ManagerFactory managers, MapperFactory mappers) {
@@ -24,33 +26,46 @@ public class TaskManager implements ITaskManager {
 
     @Override
     public ITask[] getAllTasksForUser(IUser user) {
-        // TODO Auto-generated method stub
-        return null;
+        return (ITask[]) this.getDAOsForUserLoggedIn(user).stream().map(i -> mappers.getTaskMapper().mapFromDAODeep(i))
+                .toArray();
+    }
+
+    private List<TaskDAO> getDAOsForUserLoggedIn(IUser user) {
+        List<TaskDAO> userTasks = taskDatabase.get(user.getEmail());
+        if (userTasks == null) {
+            userTasks = new ArrayList<>();
+            taskDatabase.put(user.getEmail(), userTasks);
+        }
+        return userTasks;
     }
 
     @Override
     public ITask getTaskByIdForUser(int taskId, IUser user) {
-        // TODO Auto-generated method stub
+        TaskDAO dao = this.getDAOsForUserLoggedIn(user).stream().filter(i -> i.getId() == taskId).findFirst().get();
+        if (dao != null)
+            return mappers.getTaskMapper().mapFromDAODeep(dao);
         return null;
     }
 
     @Override
     public void createTask(ITask task) {
-        // TODO Auto-generated method stub
-
+        TaskDAO dao = mappers.getTaskMapper().mapToDAODeep(task);
+        this.getDAOsForUserLoggedIn(task.getUser()).add(dao);
     }
 
     @Override
     public void updateTask(ITask task) {
-        // TODO Auto-generated method stub
-
+        TaskDAO newDao = mappers.getTaskMapper().mapToDAODeep(task);
+        List<TaskDAO> userTasks = this.getDAOsForUserLoggedIn(task.getUser());
+        userTasks.set(userTasks.indexOf(userTasks.stream().filter(i -> i.getId() == task.getId()).findFirst().get()),
+                newDao);
     }
 
     @Override
     public void deleteTaskByIdForUser(int taskId, IUser user) {
-        // TODO Auto-generated method stub
+        List<TaskDAO> userTasks = this.getDAOsForUserLoggedIn(user);
+        userTasks.remove(userTasks.indexOf(userTasks.stream().filter(i -> i.getId() == taskId).findFirst().get()));
 
     }
 
-    // TODO
 }

@@ -12,10 +12,12 @@ import cz.mciesla.ucl.logic.app.entities.definition.IUser;
  * Category
  */
 public class Category implements ICategory {
-    private int id; // TODO: Missing ID (Hibernate)
-    private IUser user; // TODO: Missing user (Hibernate/Constructor)
+    private int id;
+    private IUser user;
     private String title;
     private Color color;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     private int tasksCountCache;
     private boolean tasksCountCacheChanged;
@@ -27,11 +29,16 @@ public class Category implements ICategory {
         this.tasksCountCacheChanged = true;
     }
 
-    public Category(IUser userEntity, int id2, String title2, Color color2, LocalDateTime createdAt,
-			LocalDateTime updatedAt) {
-	}
+    public Category(IUser userEntity, int id, String title, Color color, LocalDateTime createdAt,
+            LocalDateTime updatedAt) {
+        this.user = userEntity;
+        this.id = id;
+        this.color = color;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
 
-	private Stream<ITask> getUserTasksStream() {
+    private Stream<ITask> getUserTasksStream() {
         return Stream.of(this.user.getTasks()); // FIXME: Use UserService instead
     }
 
@@ -57,7 +64,7 @@ public class Category implements ICategory {
 
     @Override
     public int tasksCount() {
-        if(this.tasksCountCacheChanged)
+        if (this.tasksCountCacheChanged)
             this.tasksCountCache = this.getTasks().length;
         this.tasksCountCacheChanged = false;
         return this.tasksCountCache;
@@ -85,13 +92,11 @@ public class Category implements ICategory {
 
     @Override
     public LocalDateTime getCreatedAt() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.createdAt;
     }
 
     @Override
     public LocalDateTime getUpdatedAt() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.updatedAt;
     }
 }

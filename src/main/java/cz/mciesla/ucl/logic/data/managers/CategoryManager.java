@@ -15,6 +15,7 @@ public class CategoryManager implements ICategoryManager {
     /** Keys in the map will be emails of user who owns the category */
     private Map<String, List<CategoryDAO>> categoryDatabase;
     private MapperFactory mappers;
+    @SuppressWarnings("unused")
     private ManagerFactory managers;
 
     public CategoryManager(ManagerFactory managers, MapperFactory mappers) {

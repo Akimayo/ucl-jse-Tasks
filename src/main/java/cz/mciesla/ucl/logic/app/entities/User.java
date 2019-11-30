@@ -16,12 +16,14 @@ import cz.mciesla.ucl.logic.app.entities.definition.IUser;
 public class User implements IUser, ITaskOwner {
 
     private List<ITask> tasks;
-    private int id; // TODO: Missing ID (Hibernate)
+    private int id;
     private String email;
     private String username;
     private String password;
     private List<ICategory> categories;
     private List<ITag> tags;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public User(String email, String username, String password) {
         this.email = email;
@@ -33,11 +35,17 @@ public class User implements IUser, ITaskOwner {
         this.tags = new ArrayList<>();
     }
 
-	public User(int id2, String email2, String username2, String password2, LocalDateTime createdAt,
-			LocalDateTime updatedAt) {
-	}
+    public User(int id, String email, String username, String password, LocalDateTime createdAt,
+            LocalDateTime updatedAt) {
+        this.id = id;
+        this.email = email;
+        this.username = username;
+        this.password = password;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
 
-	@Override
+    @Override
     public ITask[] getTasks() {
         return this.tasks.toArray(new ITask[0]);
     }
@@ -134,15 +142,12 @@ public class User implements IUser, ITaskOwner {
 
     @Override
     public LocalDateTime getCreatedAt() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.createdAt;
     }
 
     @Override
     public LocalDateTime getUpdatedAt() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.updatedAt;
     }
-
 
 }

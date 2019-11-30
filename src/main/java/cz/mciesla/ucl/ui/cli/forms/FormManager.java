@@ -22,8 +22,6 @@ public class FormManager implements IFormManager {
         this.data = new HashMap<>();
     }
 
-    // TODO
-
     @Override
     public Map<String, String> processForm() {
         for(IFormField field : this.form.getFormFields()) {
