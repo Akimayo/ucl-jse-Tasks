@@ -1,5 +1,6 @@
 package cz.mciesla.ucl.logic.app.entities;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +32,10 @@ public class User implements IUser, ITaskOwner {
         this.categories = new ArrayList<>();
         this.tags = new ArrayList<>();
     }
+
+	public User(int id2, String email2, String username2, String password2, LocalDateTime createdAt,
+			LocalDateTime updatedAt) {
+	}
 
 	@Override
     public ITask[] getTasks() {
@@ -125,6 +130,18 @@ public class User implements IUser, ITaskOwner {
     @Override
     public int tagsCount() {
         return this.tags.size();
+    }
+
+    @Override
+    public LocalDateTime getCreatedAt() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public LocalDateTime getUpdatedAt() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 

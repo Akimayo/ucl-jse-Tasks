@@ -1,6 +1,5 @@
 package cz.mciesla.ucl.ui.definition.menu;
 
-import cz.mciesla.ucl.logic.IAppLogic;
 import cz.mciesla.ucl.logic.app.entities.definition.ICategory;
 import cz.mciesla.ucl.logic.app.entities.definition.ITag;
 import cz.mciesla.ucl.logic.app.entities.definition.ITask;

@@ -1,5 +1,6 @@
 package cz.mciesla.ucl.logic.app.entities;
 
+import java.time.LocalDateTime;
 import java.util.stream.Stream;
 
 import cz.mciesla.ucl.logic.app.entities.definition.Color;
@@ -26,7 +27,11 @@ public class Category implements ICategory {
         this.tasksCountCacheChanged = true;
     }
 
-    private Stream<ITask> getUserTasksStream() {
+    public Category(IUser userEntity, int id2, String title2, Color color2, LocalDateTime createdAt,
+			LocalDateTime updatedAt) {
+	}
+
+	private Stream<ITask> getUserTasksStream() {
         return Stream.of(this.user.getTasks()); // FIXME: Use UserService instead
     }
 
@@ -76,5 +81,17 @@ public class Category implements ICategory {
     @Override
     public Color getColor() {
         return this.color;
+    }
+
+    @Override
+    public LocalDateTime getCreatedAt() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public LocalDateTime getUpdatedAt() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

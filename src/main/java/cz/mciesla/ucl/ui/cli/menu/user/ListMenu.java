@@ -31,6 +31,7 @@ public class ListMenu<T> extends Menu {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void build() {
         T[] entities = null;
         if(this.__type.equals(ITask.class)){

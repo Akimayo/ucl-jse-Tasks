@@ -1,5 +1,7 @@
 package cz.mciesla.ucl.logic.app.entities.definition;
 
+import java.time.LocalDateTime;
+
 public interface IUser extends ITaskOwner {
     int getId();
     String getEmail();
@@ -19,4 +21,6 @@ public interface IUser extends ITaskOwner {
     void saveTag(int i, ITag tag);
     void addTag(ITag tag);
     int tagsCount();
+	LocalDateTime getCreatedAt();
+	LocalDateTime getUpdatedAt();
 }
