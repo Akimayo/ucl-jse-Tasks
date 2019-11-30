@@ -1,15 +1,18 @@
 package cz.mciesla.ucl.ui.cli.menu;
 
+import cz.mciesla.ucl.logic.IAppLogic;
 import cz.mciesla.ucl.logic.app.entities.definition.ICategory;
 import cz.mciesla.ucl.logic.app.entities.definition.ITag;
 import cz.mciesla.ucl.logic.app.entities.definition.ITask;
 import cz.mciesla.ucl.ui.cli.forms.FormField;
 import cz.mciesla.ucl.ui.cli.menu.system.BackMenu;
+import cz.mciesla.ucl.ui.cli.menu.system.DestroyEntityMenu;
 import cz.mciesla.ucl.ui.cli.menu.system.FillFormMenu;
 import cz.mciesla.ucl.ui.cli.menu.system.LogoutMenu;
 import cz.mciesla.ucl.ui.cli.menu.system.QuitMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.CategoriesMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.ConfirmLogoutMenu;
+import cz.mciesla.ucl.ui.cli.menu.user.ConfirmDestroyEntityMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.ListMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.MainMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.SettingsMenu;
@@ -203,6 +206,19 @@ public class MenuFactory implements IMenuFactory {
     @Override
     public IMenu createTagDetailMenu(IMenu listMenu, IUserInterface ui, ITag e) {
         return new TagDetailMenu(listMenu, ui, e);
+    }
+
+    @Override
+    public <T> IMenu createConfirmDestroyMenu(IMenu parentMenu, IUserInterface ui, T entity) {
+        return new ConfirmDestroyEntityMenu<T>(parentMenu, ui, entity);
+    }
+
+    @Override
+    public <T> IMenu createDestroyMenu(IMenu parentMenu, IUserInterface ui, T entity) {
+        if(entity instanceof ITask) return new DestroyEntityMenu<ITask>(parentMenu, ui, (ITask)entity);
+        if(entity instanceof ICategory) return new DestroyEntityMenu<ICategory>(parentMenu, ui, (ICategory)entity);
+        if(entity instanceof ITag) return new DestroyEntityMenu<ITag>(parentMenu, ui, (ITag)entity);
+        return null;
     }
 
 }

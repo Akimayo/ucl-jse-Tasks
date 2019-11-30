@@ -6,6 +6,7 @@ import cz.mciesla.ucl.logic.exceptions.InvalidCredentialsException;
 import cz.mciesla.ucl.logic.exceptions.NotLoggedInException;
 import cz.mciesla.ucl.ui.cli.forms.FormManager;
 import cz.mciesla.ucl.ui.cli.menu.MenuFactory;
+import cz.mciesla.ucl.ui.cli.menu.system.DestroyEntityMenu;
 import cz.mciesla.ucl.ui.cli.views.*;
 import cz.mciesla.ucl.ui.definition.forms.FormFieldType;
 import cz.mciesla.ucl.ui.definition.forms.IForm;
@@ -323,6 +324,18 @@ public class CLI implements ICLI {
                 nextMenu = currentMenu.getParentMenu();
             }
             break;
+        case SYSTEM_DESTROY:
+            try {
+                DestroyEntityMenu<?> menu = (DestroyEntityMenu<?>)nextMenu;
+                if(menu.getEntity() instanceof ITask) this.logic.getUserLoggedIn().saveTask(((ITask)menu).getId(), null);
+                if(menu.getEntity() instanceof ICategory) this.logic.getUserLoggedIn().saveCategory(((ICategory)menu).getId(), null);
+                if(menu.getEntity() instanceof ITag) this.logic.getUserLoggedIn().saveTag(((ITag)menu).getId(), null);
+            } catch (NullPointerException e) {
+                drawError(e.getMessage());
+            } finally {
+                nextMenu = currentMenu.getParentMenu();
+            }
+            break;
         default:
             throw new RuntimeException(nextMenu.getType() + " is not valid type of system menu ");
         }
@@ -334,8 +347,8 @@ public class CLI implements ICLI {
     // endregion
 
     private Map<String, String> handleForm(IMenu currentMenu) {
+        /* Probably worthless - breaks scanner */
         // return this.createFormManagerForMenu(currentMenu).processForm();
-        /* Probably worthless now */
         Map<String, String> ret = new HashMap<String, String>();
         for (IFormField field : currentMenu.getFormFields()) {
             if (field.getType() == FormFieldType.META) {

@@ -1,5 +1,6 @@
 package cz.mciesla.ucl.ui.definition.menu;
 
+import cz.mciesla.ucl.logic.IAppLogic;
 import cz.mciesla.ucl.logic.app.entities.definition.ICategory;
 import cz.mciesla.ucl.logic.app.entities.definition.ITag;
 import cz.mciesla.ucl.logic.app.entities.definition.ITask;
@@ -31,4 +32,6 @@ public interface IMenuFactory {
 	IMenu createTaskDetailMenu(IMenu listMenu, IUserInterface ui, ITask e);
 	IMenu createCategoryDetailMenu(IMenu listMenu, IUserInterface ui, ICategory e);
 	IMenu createTagDetailMenu(IMenu listMenu, IUserInterface ui, ITag e);
+    <T> IMenu createConfirmDestroyMenu(IMenu parentMenu, IUserInterface ui, T entity);
+	<T> IMenu createDestroyMenu(IMenu parentMenu, IUserInterface ui, T entity);
 }

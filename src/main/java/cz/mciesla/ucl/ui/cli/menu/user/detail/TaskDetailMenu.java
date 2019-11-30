@@ -24,7 +24,7 @@ public class TaskDetailMenu extends Menu {
         this.logic = ui.getLogic();
         this.ui = ui;
     }
-    
+
     @Override
     public void initialize() {
         this.clearOptions();
@@ -39,11 +39,13 @@ public class TaskDetailMenu extends Menu {
         IMenu changeCategoryMenu= this.ui.getMenuFactory().createListMenu(ICategory.class, this, this.ui, "Vybrat kategorii"); // FIXME: Mock
         IMenu changeTagsMenu = this.ui.getMenuFactory().createListMenu(ITag.class, this, this.ui, "Vybrat značky"); // FIXME: Mock
         IMenu editMenu = this.ui.getMenuFactory().createTaskFormMenu(this.parentMenu, this.ui, this.task);
+        IMenu destroyMenu = this.ui.getMenuFactory().createConfirmDestroyMenu(this.parentMenu, this.ui, this.task);
 
         this.addOption(new MenuOption(this.nextOptionNumber(), backMenu));
         this.addOption(new MenuOption(this.nextOptionNumber(), changeCategoryMenu));
         this.addOption(new MenuOption(this.nextOptionNumber(), changeTagsMenu));
         this.addOption(new MenuOption(this.nextOptionNumber(), editMenu));
+        this.addOption(new MenuOption(this.nextOptionNumber(), destroyMenu));
     }
 
 }
