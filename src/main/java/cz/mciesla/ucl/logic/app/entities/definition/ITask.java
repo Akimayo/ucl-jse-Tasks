@@ -1,5 +1,6 @@
 package cz.mciesla.ucl.logic.app.entities.definition;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public interface ITask {
@@ -15,6 +16,8 @@ public interface ITask {
     boolean isDone();
 
     ICategory getCategory();
+
+    LocalDate getDeadline();
 
     LocalDateTime getCreatedAt();
 
@@ -43,5 +46,7 @@ public interface ITask {
 
 	void setNote(String note);
 
-	void setCategory(ICategory category);
+    void setCategory(ICategory category);
+
+    void setDeadline(LocalDate deadline);
 }

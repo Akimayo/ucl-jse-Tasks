@@ -1,5 +1,6 @@
 package cz.mciesla.ucl.logic.app.services;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -121,27 +122,28 @@ public class TaskService implements ITaskService {
 
     @Override
     public void createTask(String title) {
-        this.createTask(title, null, null);
+        this.createTask(title, null, null, null);
     }
 
     @Override
     public void createTask(String title, String note) {
-        this.createTask(title, note, null);
+        this.createTask(title, note, null, null);
     }
 
     @Override
-    public void createTask(String title, String note, ICategory category) {
+    public void createTask(String title, String note, ICategory category, LocalDate deadline) {
         if (this.userService.isUserLoggedIn())
-            this.manager.createTask(new Task(this.userService.getUserLoggedIn(), title, note, category));
+            this.manager.createTask(new Task(this.userService.getUserLoggedIn(), title, note, category, deadline));
     }
 
     @Override
-    public void updateTask(int id, String title, String note, ICategory category) {
+    public void updateTask(int id, String title, String note, ICategory category, LocalDate deadline) {
         if (this.userService.isUserLoggedIn()) {
             ITask target = this.manager.getTaskByIdForUser(id, this.userService.getUserLoggedIn());
             if(title != "") target.setTitle(title);
             if(note != "") target.setNote(note);
             if(category != null) target.setCategory(category);
+            if(deadline != null) target.setDeadline(deadline);
             this.manager.updateTask(target);
         }
     }

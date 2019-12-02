@@ -8,7 +8,6 @@ import cz.mciesla.ucl.ui.cli.forms.FormManager;
 import cz.mciesla.ucl.ui.cli.menu.MenuFactory;
 import cz.mciesla.ucl.ui.cli.menu.system.DestroyEntityMenu;
 import cz.mciesla.ucl.ui.cli.views.*;
-import cz.mciesla.ucl.ui.definition.forms.FormFieldType;
 import cz.mciesla.ucl.ui.definition.forms.IForm;
 import cz.mciesla.ucl.ui.definition.forms.IFormField;
 import cz.mciesla.ucl.ui.definition.forms.IFormManager;
@@ -23,6 +22,9 @@ import cz.mciesla.ucl.ui.definition.menu.IMenuOption;
 import cz.mciesla.ucl.ui.definition.views.*;
 
 import java.io.Console;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.IntStream;
 
@@ -164,12 +166,16 @@ public class CLI implements ICLI {
 
     private void actionTask(IMenu fromMenu, Map<String, String> formData) {
         try {
+            LocalDate date = null;
+            try {
+                date = LocalDate.parse(formData.get("deadline"), DateTimeFormatter.BASIC_ISO_DATE);
+            } catch (DateTimeParseException e) {}
             if (formData.get("task").equals("")) {
-                this.logic.createTask(formData.get("title"), formData.get("note"), null); // FIXME: Category selection
+                this.logic.createTask(formData.get("title"), formData.get("note"), null, date); // FIXME: Category selection
                 drawMessage("Úkol byl úspěšně vytvořen");
             } else {
                 int sourceId = Integer.parseInt(formData.get("task"));
-                this.logic.updateTask(sourceId, formData.get("title"), formData.get("note"), null); // FIXME: Cateogory selection
+                this.logic.updateTask(sourceId, formData.get("title"), formData.get("note"), null, date); // FIXME: Cateogory selection
                 drawMessage("Úkol byl úspěšně upraven");
             }
         } catch (NullPointerException e) {
@@ -307,7 +313,7 @@ public class CLI implements ICLI {
         case SYSTEM_DESTROY:
             try {
                 DestroyEntityMenu<?> menu = (DestroyEntityMenu<?>)nextMenu;
-                if(menu.getEntity() instanceof ITask) this.logic.destroyTask(((ITask)menu.getEntity()).getId());;
+                if(menu.getEntity() instanceof ITask) this.logic.destroyTask(((ITask)menu.getEntity()).getId());
                 if(menu.getEntity() instanceof ICategory) this.logic.destroyCategory(((ICategory)menu.getEntity()).getId());
                 if(menu.getEntity() instanceof ITag) this.logic.destroyCategory(((ITag)menu.getEntity()).getId());
             } catch (NullPointerException e) {
@@ -331,26 +337,42 @@ public class CLI implements ICLI {
         // return this.createFormManagerForMenu(currentMenu).processForm();
         Map<String, String> ret = new HashMap<String, String>();
         for (IFormField field : currentMenu.getFormFields()) {
-            if (field.getType() == FormFieldType.META) {
-                ret.put(field.getIdentifier(), field.getTitle());
-                continue;
-            }
-            this.drawPrompt(field.getLabel());
-            System.out.print(field.getTitle() + ": ");
             String in = null;
-            boolean hasInput;
-            do {
-                hasInput = this.sc.hasNext();
-                if (hasInput)
-                    in = this.sc.next();
-            } while (field.getIsRequired() && !hasInput);
+            switch(field.getType()) {
+                case META:
+                    ret.put(field.getIdentifier(), field.getTitle());
+                    continue;
+                case DATE:
+                    in = getInput(field);
+                    try {
+                        in = LocalDate.parse(in).format(DateTimeFormatter.BASIC_ISO_DATE);
+                    } catch (DateTimeParseException e) {
+                        drawError("Vložená hodnota není datum");
+                    }
+                    break;
+                default:
+                    in = getInput(field);
+                    break;
+            }
             ret.put(field.getIdentifier(), in);
         }
         return ret;
     }
 
+    private String getInput(IFormField field) {
+        this.drawPrompt(field.getLabel());
+        System.out.print(field.getTitle() + ": ");
+        boolean hasInput;
+        do {
+            hasInput = this.sc.hasNext();
+            if (hasInput)
+                return this.sc.next();
+        } while (field.getIsRequired() && !hasInput);
+        return null;
+    }
+
     // region Utilities
-    /* * Checks if validOptions contains testedOption */
+    /** Checks if validOptions contains testedOption */
     private boolean isValidOption(int testedOption, int[] validOptions) {
         return IntStream.of(validOptions).anyMatch(x -> x == testedOption);
     }

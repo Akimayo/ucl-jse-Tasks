@@ -1,5 +1,6 @@
 package cz.mciesla.ucl.logic.data.dao;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +11,8 @@ public class TaskDAO {
 	private UserDAO user;
 	private String title;
 	private String note;
-	private CategoryDAO category;
+    private CategoryDAO category;
+    private LocalDate deadline;
 	private List<TagDAO> tags;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
@@ -82,4 +84,12 @@ public class TaskDAO {
 	public void setId(int id) {
 		this.id = id;
 	}
+
+	public LocalDate getDeadline() {
+		return this.deadline;
+    }
+
+    public void setDeadline(LocalDate deadline) {
+        this.deadline = deadline;
+    }
 }

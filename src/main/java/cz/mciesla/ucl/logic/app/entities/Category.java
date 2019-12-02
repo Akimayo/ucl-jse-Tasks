@@ -55,7 +55,7 @@ public class Category implements ICategory {
 
     @Override
     public ITask[] getTasks() {
-        return (ITask[]) this.getUserTasksStream().filter(i -> i.getCategory().equals(this)).toArray();
+        return this.getUserTasksStream().filter(i -> i.getCategory().equals(this)).toArray(ITask[]::new);
     }
 
     @Override

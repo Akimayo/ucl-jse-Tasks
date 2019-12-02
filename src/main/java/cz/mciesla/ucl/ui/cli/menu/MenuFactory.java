@@ -112,8 +112,10 @@ public class MenuFactory implements IMenuFactory {
             protected void defineForm() {
                 addFormField(new FormField("task", task == null ? "" : Integer.toString(task.getId()), FormFieldType.META));
                 addFormField(new FormField("title", "Název", FormFieldType.TEXTUAL));
-                addFormField(new FormField("note", "Poznámky", "", FormFieldType.TEXTUAL, false));
-                // TODO: Add more fields
+                addFormField(new FormField("note", "Poznámky", FormFieldType.TEXTUAL));
+                addFormField(new FormField("deadline", "Termín splnění", FormFieldType.DATE));
+                // addFormField(new FormField("category", "Kategorie", FormFieldType.CATEGORY_ASSOC));
+                // addFormField(new FormField("tags", "Značky", FormFieldType.TAG_ASSOC));
             }
         };
     }

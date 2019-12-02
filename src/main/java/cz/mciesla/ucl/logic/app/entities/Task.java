@@ -1,5 +1,6 @@
 package cz.mciesla.ucl.logic.app.entities;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,7 @@ public class Task implements ITask {
     private IUser user;
     private boolean done;
     private ICategory category;
+    private LocalDate deadline;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private List<ITag> tags;
@@ -32,12 +34,13 @@ public class Task implements ITask {
     private int tagsCountCache;
     private boolean tagsCountCacheChanged;
 
-    public Task(IUser user, String title, String note, ICategory category) {
+    public Task(IUser user, String title, String note, ICategory category, LocalDate deadline) {
         this.user = user;
         this.title = title;
         this.note = note;
         this.category = category;
         this.tags = new ArrayList<>();
+        this.deadline = deadline;
 
         this.tagsCountCacheChanged = true;
 
@@ -47,9 +50,9 @@ public class Task implements ITask {
         this.id = ++idCounter;
     }
 
-    public Task(IUser userEntity, int id, String title, String note, ICategory category, LocalDateTime createdAt,
-            LocalDateTime updatedAt) {
-        this(userEntity, title, note, category);
+    public Task(IUser userEntity, int id, String title, String note, ICategory category, LocalDate deadline,
+            LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this(userEntity, title, note, category, deadline);
         this.id = id;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -155,4 +158,11 @@ public class Task implements ITask {
         this.updatedAt = LocalDateTime.now();
     }
 
+    public LocalDate getDeadline() {
+        return this.deadline;
+    }
+
+    public void setDeadline(LocalDate deadline) {
+        this.deadline = deadline;
+    }
 }

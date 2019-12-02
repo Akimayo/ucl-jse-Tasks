@@ -1,5 +1,7 @@
 package cz.mciesla.ucl.logic;
 
+import java.time.LocalDate;
+
 import cz.mciesla.ucl.logic.app.entities.definition.Color;
 import cz.mciesla.ucl.logic.app.entities.definition.ICategory;
 import cz.mciesla.ucl.logic.app.entities.definition.ITag;
@@ -185,13 +187,13 @@ public class Program implements IAppLogic {
     }
 
     @Override
-    public void createTask(String title, String note, ICategory category) {
-        this.taskService.createTask(title, note, category);
+    public void createTask(String title, String note, ICategory category, LocalDate deadline) {
+        this.taskService.createTask(title, note, category, deadline);
     }
 
     @Override
-    public void updateTask(int id, String title, String note, ICategory category) {
-        this.taskService.updateTask(id, title, note, category);
+    public void updateTask(int id, String title, String note, ICategory category, LocalDate deadline) {
+        this.taskService.updateTask(id, title, note, category, deadline);
     }
 
     @Override

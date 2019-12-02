@@ -7,9 +7,11 @@ import cz.mciesla.ucl.ui.definition.views.ITaskView;
 
 public class TaskView implements ITaskView {
     private DateTimeFormatter format;
+    private DateTimeFormatter dateOnlyFormat;
 
     public TaskView() {
         this.format = DateTimeFormatter.ofPattern("dd. MM. YYYY HH:mm:ss");
+        this.dateOnlyFormat = DateTimeFormatter.ofPattern("dd. MM. YYYY");
     }
 
     @Override
@@ -23,7 +25,10 @@ public class TaskView implements ITaskView {
 
     @Override
     public String formatTask(ITask task) {
-        StringBuilder ret = new StringBuilder("= " + task.getNote() + " =" + System.lineSeparator() + System.lineSeparator());
+        StringBuilder ret = new StringBuilder("= " + task.getNote() + " =" + System.lineSeparator());
+        if(task.getDeadline() != null)
+            ret.append("= Splnit do ").append(task.getDeadline().format(this.dateOnlyFormat)).append(" =").append(System.lineSeparator());
+        ret.append(System.lineSeparator());
         ret.append("Vytvořeno: ").append(task.getCreatedAt().format(this.format)).append(System.lineSeparator());
         ret.append(" Upraveno: ").append(task.getUpdatedAt().format(this.format)).append(System.lineSeparator());
         ret.append("    Kategorie");

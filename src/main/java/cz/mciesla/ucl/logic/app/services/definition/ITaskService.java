@@ -1,5 +1,7 @@
 package cz.mciesla.ucl.logic.app.services.definition;
 
+import java.time.LocalDate;
+
 import cz.mciesla.ucl.logic.app.entities.definition.ICategory;
 import cz.mciesla.ucl.logic.app.entities.definition.ITag;
 import cz.mciesla.ucl.logic.app.entities.definition.ITask;
@@ -40,10 +42,10 @@ public interface ITaskService {
     void createTask(String title, String note);
 
     /** Creates a task with title, note and category */
-    void createTask(String title, String note, ICategory category);
+    void createTask(String title, String note, ICategory category, LocalDate deadline);
 
     /** Finds a task by its ID and updates it */
-    void updateTask(int id, String title, String note, ICategory category);
+    void updateTask(int id, String title, String note, ICategory category, LocalDate deadline);
 
     /** Finds a task by its ID and destroys it */
     void destroyTask(int id);

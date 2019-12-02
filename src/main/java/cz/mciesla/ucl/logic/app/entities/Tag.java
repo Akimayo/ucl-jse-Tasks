@@ -56,8 +56,7 @@ public class Tag implements ITag {
 
     @Override
     public ITask[] getTasks() {
-        return (ITask[]) this.getUserTaskStream().filter(i -> Stream.of(i.getTags()).anyMatch(t -> t.equals(this)))
-                .toArray();
+        return this.getUserTaskStream().filter(i -> Stream.of(i.getTags()).anyMatch(t -> t.equals(this))).toArray(ITask[]::new);
     }
 
     @Override
