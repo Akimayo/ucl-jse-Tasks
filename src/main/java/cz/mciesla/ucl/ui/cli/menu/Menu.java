@@ -79,8 +79,7 @@ public abstract class Menu implements IMenu {
     }
     @Override
     public MenuType getType() {
-        // WTF: TODO: Figure out types
-        return null;
+        return MenuType.USER;
     }
     @Override
     public String renderFormField(IFormField formField) {

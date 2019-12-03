@@ -7,6 +7,7 @@ import cz.mciesla.ucl.logic.exceptions.NotLoggedInException;
 import cz.mciesla.ucl.ui.cli.forms.FormManager;
 import cz.mciesla.ucl.ui.cli.menu.MenuFactory;
 import cz.mciesla.ucl.ui.cli.menu.system.DestroyEntityMenu;
+import cz.mciesla.ucl.ui.cli.menu.system.ToggleDoneMenu;
 import cz.mciesla.ucl.ui.cli.views.*;
 import cz.mciesla.ucl.ui.definition.forms.IForm;
 import cz.mciesla.ucl.ui.definition.forms.IFormField;
@@ -171,11 +172,14 @@ public class CLI implements ICLI {
                 date = LocalDate.parse(formData.get("deadline"), DateTimeFormatter.BASIC_ISO_DATE);
             } catch (DateTimeParseException e) {}
             if (formData.get("task").equals("")) {
-                this.logic.createTask(formData.get("title"), formData.get("note"), null, date); // FIXME: Category selection
+                ICategory cat;
+                if(!formData.containsKey("category") || formData.get("category") == "") cat = null;
+                else cat = this.logic.getCategoryById(Integer.parseInt(formData.get("category")));
+                this.logic.createTask(formData.get("title"), formData.get("note"), cat, date);
                 drawMessage("Úkol byl úspěšně vytvořen");
             } else {
                 int sourceId = Integer.parseInt(formData.get("task"));
-                this.logic.updateTask(sourceId, formData.get("title"), formData.get("note"), null, date); // FIXME: Cateogory selection
+                this.logic.updateTask(sourceId, formData.get("title"), formData.get("note"), this.logic.getCategoryById(Integer.parseInt(formData.get("category"))), date);
                 drawMessage("Úkol byl úspěšně upraven");
             }
         } catch (NullPointerException e) {
@@ -213,8 +217,6 @@ public class CLI implements ICLI {
             drawError("Tato kategorie již neexistuje nebo byl uživatel odhlášen");
         }
     }
-
-    // TODO: Add actions
     // endregion
 
     // region Handlers
@@ -283,8 +285,6 @@ public class CLI implements ICLI {
         return nextMenu;
     }
 
-    // TODO: Add handlers
-
     private IMenu handleSystemMenuChange(IMenu currentMenu, IMenu nextMenu) {
         switch (nextMenu.getType()) {
         case SYSTEM_BACK:
@@ -322,14 +322,16 @@ public class CLI implements ICLI {
                 nextMenu = currentMenu.getParentMenu();
             }
             break;
+        case SYSTEM_TOGGLE_DONE:
+            ToggleDoneMenu menu = (ToggleDoneMenu)nextMenu;
+            if(menu.getEntity().isDone()) menu.getEntity().reopen();
+            else menu.getEntity().complete();
+            break;
         default:
             throw new RuntimeException(nextMenu.getType() + " is not valid type of system menu ");
         }
         return nextMenu;
     }
-
-    // TODO: Add handlers
-
     // endregion
 
     private Map<String, String> handleForm(IMenu currentMenu) {
@@ -350,6 +352,24 @@ public class CLI implements ICLI {
                         drawError("Vložená hodnota není datum");
                     }
                     break;
+                case CATEGORY_ASSOC:
+                    ICategory[] categories = this.logic.getAllCategories();
+                    if(categories.length <= 0) continue;
+                    this.drawPrompt("Kategorie:");
+                    StringBuilder cout = new StringBuilder("1: [bez kategorie]    ");
+                    for(int i = 2; i < categories.length + 2; i++) {
+                        cout.append(i + ": " + categories[i - 2].getTitle() + "    ");
+                        if(i % 4 == 0) cout.append(System.lineSeparator());
+                    }
+                    this.drawPrompt(cout.toString());
+                    int index = -1;
+                    do {
+                        this.drawPrompt(field.getLabel());
+                        index = this.promptNumber();
+                    } while(index <= 0 || index > categories.length + 1);
+                    if(index == 1) ret.put(field.getIdentifier(), "");
+                    else ret.put(field.getIdentifier(), Integer.toString(categories[index - 2].getId()));
+                    continue;
                 default:
                     in = getInput(field);
                     break;
@@ -422,9 +442,6 @@ public class CLI implements ICLI {
 
     @Override
     public String getWelcomeText() {
-        // WTF: What?!
-        // Potential FIXME: Move string literal to a constant
-        // Potential TODO: Make the text a tad better
         return "Vítejte v úkolníčku Tasks";
     }
 

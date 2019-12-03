@@ -32,13 +32,17 @@ public class TaskView implements ITaskView {
         ret.append("Vytvořeno: ").append(task.getCreatedAt().format(this.format)).append(System.lineSeparator());
         ret.append(" Upraveno: ").append(task.getUpdatedAt().format(this.format)).append(System.lineSeparator());
         ret.append("    Kategorie");
-        int catLength;
+        int catLength, iterCount = 0;
         if (task.getCategory() == null) catLength = 0;
-        else catLength = task.getCategory().getTitle().length();
+        else {
+            catLength = task.getCategory().getTitle().length();
+            iterCount++;
+        }
         for (int i = 0; i < 16 - catLength; i++)
             ret.append(" ");
         ret.append("Značky");
-        for (int i = 0; i < task.getTags().length; i++) {
+        if(task.getTags().length > iterCount) iterCount = task.getTags().length;
+        for (int i = 0; i < iterCount; i++) {
             ret.append(System.lineSeparator()).append("    ");
             if (i == 0) {
                 ret.append(task.getCategory().getTitle());
@@ -48,7 +52,7 @@ public class TaskView implements ITaskView {
                 for (int j = 0; j < 16; j++)
                     ret.append(" ");
             }
-            ret.append(task.getTags()[i].getTitle());
+            if(task.getTags().length > 0) ret.append(task.getTags()[i].getTitle());
         }
         return ret.toString();
     }

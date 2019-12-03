@@ -3,6 +3,7 @@ package cz.mciesla.ucl.ui.definition.menu;
 import cz.mciesla.ucl.logic.app.entities.definition.ICategory;
 import cz.mciesla.ucl.logic.app.entities.definition.ITag;
 import cz.mciesla.ucl.logic.app.entities.definition.ITask;
+import cz.mciesla.ucl.ui.cli.menu.user.detail.TaskDetailMenu;
 import cz.mciesla.ucl.ui.definition.IUserInterface;
 
 public interface IMenuFactory {
@@ -33,4 +34,5 @@ public interface IMenuFactory {
 	IMenu createTagDetailMenu(IMenu listMenu, IUserInterface ui, ITag e);
     <T> IMenu createConfirmDestroyMenu(IMenu parentMenu, IUserInterface ui, T entity);
 	<T> IMenu createDestroyMenu(IMenu parentMenu, IUserInterface ui, T entity);
+	IMenu createMarkDoneMenu(TaskDetailMenu taskDetailMenu, ITask task);
 }

@@ -7,21 +7,30 @@ import java.util.List;
 
 public class TaskDAO {
 
-	private int id;
-	private UserDAO user;
-	private String title;
-	private String note;
+    private int id;
+    private UserDAO user;
+    private String title;
+    private String note;
+    private boolean done;
     private CategoryDAO category;
     private LocalDate deadline;
-	private List<TagDAO> tags;
-	private LocalDateTime createdAt;
-	private LocalDateTime updatedAt;
+    private List<TagDAO> tags;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
-	public TaskDAO() {
-		tags = new ArrayList<>();
-	}
+    public TaskDAO() {
+        tags = new ArrayList<>();
+    }
 
-	public String getNote() {
+    public boolean isDone() {
+        return this.done;
+    }
+
+    public void setDone(boolean done) {
+        this.done = done;
+    }
+
+    public String getNote() {
 		return note;
 	}
 

@@ -9,6 +9,7 @@ import cz.mciesla.ucl.ui.cli.menu.system.DestroyEntityMenu;
 import cz.mciesla.ucl.ui.cli.menu.system.FillFormMenu;
 import cz.mciesla.ucl.ui.cli.menu.system.LogoutMenu;
 import cz.mciesla.ucl.ui.cli.menu.system.QuitMenu;
+import cz.mciesla.ucl.ui.cli.menu.system.ToggleDoneMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.CategoriesMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.ConfirmLogoutMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.ConfirmDestroyEntityMenu;
@@ -114,7 +115,7 @@ public class MenuFactory implements IMenuFactory {
                 addFormField(new FormField("title", "Název", FormFieldType.TEXTUAL));
                 addFormField(new FormField("note", "Poznámky", FormFieldType.TEXTUAL));
                 addFormField(new FormField("deadline", "Termín splnění", FormFieldType.DATE));
-                // addFormField(new FormField("category", "Kategorie", FormFieldType.CATEGORY_ASSOC));
+                addFormField(new FormField("category", "Kategorie", FormFieldType.CATEGORY_ASSOC));
                 // addFormField(new FormField("tags", "Značky", FormFieldType.TAG_ASSOC));
             }
         };
@@ -220,6 +221,11 @@ public class MenuFactory implements IMenuFactory {
         if(entity instanceof ICategory) return new DestroyEntityMenu<ICategory>(parentMenu, ui, (ICategory)entity);
         if(entity instanceof ITag) return new DestroyEntityMenu<ITag>(parentMenu, ui, (ITag)entity);
         return null;
+    }
+
+    @Override
+    public IMenu createMarkDoneMenu(TaskDetailMenu taskDetailMenu, ITask task) {
+        return new ToggleDoneMenu(taskDetailMenu, task);
     }
 
 }

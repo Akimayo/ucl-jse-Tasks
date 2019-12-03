@@ -78,7 +78,6 @@ public class FormManager implements IFormManager {
 			throws UnsupportedInputTypeException, InvalidFieldValueException {
         if(formField.getType() != FormFieldType.NUMERICAL)
             throw new UnsupportedInputTypeException("This method can be used only for numeric input fields.");
-        // FIXME: Figure out InvalidFieldValueException
 		return userInput;
 	}
 
@@ -87,7 +86,6 @@ public class FormManager implements IFormManager {
 			throws UnsupportedInputTypeException, InvalidFieldValueException {
         if(formField.getType() != FormFieldType.TEXTUAL)
             throw new UnsupportedInputTypeException("This method can be used only for textual input fields.");
-		// FIXME: Figure out InvalidFieldValueException
 		return userInput;
 	}
 
@@ -96,7 +94,6 @@ public class FormManager implements IFormManager {
 			throws UnsupportedInputTypeException, InvalidFieldValueException {
         if(formField.getType() != FormFieldType.SECURE)
             throw new UnsupportedInputTypeException("This method can be used only for secure input fields.");
-		// FIXME: Figure out InvalidFieldValueException
 		return userInput;
 	}
 }
