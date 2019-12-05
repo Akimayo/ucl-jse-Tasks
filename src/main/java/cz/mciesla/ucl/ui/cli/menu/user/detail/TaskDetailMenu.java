@@ -1,6 +1,5 @@
 package cz.mciesla.ucl.ui.cli.menu.user.detail;
 
-import cz.mciesla.ucl.logic.app.entities.definition.ITag;
 import cz.mciesla.ucl.logic.app.entities.definition.ITask;
 import cz.mciesla.ucl.ui.cli.menu.Menu;
 import cz.mciesla.ucl.ui.cli.menu.MenuOption;
@@ -36,7 +35,7 @@ public class TaskDetailMenu extends Menu {
 
         IMenu backMenu = this.ui.getMenuFactory().createBackMenu(this.parentMenu);
         IMenu markDoneMenu = this.ui.getMenuFactory().createMarkDoneMenu(this, this.task);
-        IMenu changeTagsMenu = this.ui.getMenuFactory().createListMenu(ITag.class, this, this.ui, "Vybrat značky"); // FIXME: Mock
+        IMenu changeTagsMenu = this.ui.getMenuFactory().createTaskTagsMenu(this, this.ui, this.task);
         IMenu editMenu = this.ui.getMenuFactory().createTaskFormMenu(this.parentMenu, this.ui, this.task);
         IMenu destroyMenu = this.ui.getMenuFactory().createConfirmDestroyMenu(this.parentMenu, this.ui, this.task);
 

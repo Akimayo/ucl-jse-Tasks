@@ -51,11 +51,12 @@ public class Task implements ITask {
         this.id = ++idCounter;
     }
 
-    public Task(IUser userEntity, int id, String title, String note, boolean done, ICategory category, LocalDate deadline,
-            LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Task(IUser userEntity, int id, String title, String note, boolean done, ICategory category,
+            LocalDate deadline, List<ITag> tags, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this(userEntity, title, note, category, deadline);
         this.id = id;
         this.done = done;
+        this.tags = tags;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -107,13 +108,11 @@ public class Task implements ITask {
 
     @Override
     public ITag getTag(int i) {
-        // WTF: ?
         return this.tags.get(i);
     }
 
     @Override
     public void saveTag(int i, ITag tag) {
-        // WTF: ?
         this.tagsCountCacheChanged = true;
         this.tags.set(i, tag);
     }
@@ -169,5 +168,16 @@ public class Task implements ITask {
     public void setDeadline(LocalDate deadline) {
         this.deadline = deadline;
         this.updatedAt = LocalDateTime.now();
+    }
+
+    @Override
+    public void removeTag(ITag tag) {
+        this.tags.remove(tag);
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @Override
+    public int compareTo(ITask o) {
+        return this.title.compareTo(o.getTitle());
     }
 }

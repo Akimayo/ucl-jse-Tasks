@@ -51,7 +51,8 @@ public class Tag implements ITag {
     }
 
     private Stream<ITask> getUserTaskStream() {
-        return Stream.of(this.user.getTasks()); // FIXME: Use UserService instead
+        // This would ideally use UserService, but it's difficult to get it here
+        return Stream.of(this.user.getTasks());
     }
 
     @Override
@@ -124,6 +125,11 @@ public class Tag implements ITag {
     public void setColor(Color color) {
         this.color = color;
         this.updatedAt = LocalDateTime.now();
+    }
+
+    @Override
+    public int compareTo(ITag o) {
+        return this.title.compareTo(o.getTitle());
     }
 
 }

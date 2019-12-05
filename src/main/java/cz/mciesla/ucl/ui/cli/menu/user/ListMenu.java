@@ -1,5 +1,7 @@
 package cz.mciesla.ucl.ui.cli.menu.user;
 
+import java.util.stream.Stream;
+
 import cz.mciesla.ucl.logic.app.entities.Category;
 import cz.mciesla.ucl.logic.app.entities.Tag;
 import cz.mciesla.ucl.logic.app.entities.Task;
@@ -33,22 +35,34 @@ public class ListMenu<T> extends Menu {
     @Override
     @SuppressWarnings("unchecked")
     protected void build() {
-        T[] entities = null;
-        if(this.__type.equals(ITask.class)){
-            entities = (T[])this.logic.getAllTasks();
-            setDescription(String.format("Zobrazuji %d úkolů", entities.length));
-        }
-        if(this.__type.equals(ICategory.class)) {
-            entities = (T[])this.logic.getAllCategories();
-            setDescription(String.format("Zobrazuji %d kategorií", entities.length));
-        }
-        if(this.__type.equals(ITag.class)) {
-            entities = (T[])this.logic.getAllTags();
-            setDescription(String.format("Zobrazuji %d značek", entities.length));
-        }
-
         IMenu backMenu = ui.getMenuFactory().createBackMenu(this);
         addOption(new MenuOption(nextOptionNumber(), backMenu));
+        T[] entities = null;
+        if(this.__type.equals(ITask.class)){
+            entities = (T[])Stream.of(this.logic.getAllTasks()).sorted().toArray(ITask[]::new);
+            setDescription(String.format("Zobrazuji %d úkolů", entities.length));
+            if(entities.length <= 0) {
+                IMenu newTaskMenu = ui.getMenuFactory().createTaskFormMenu(parentMenu, ui, null);
+                addOption(new MenuOption(nextOptionNumber(), newTaskMenu));
+            }
+        }
+        if(this.__type.equals(ICategory.class)) {
+            entities = (T[])Stream.of(this.logic.getAllCategories()).sorted().toArray(ICategory[]::new);
+            setDescription(String.format("Zobrazuji %d kategorií", entities.length));
+            if(entities.length <= 0) {
+                IMenu newCategoryMenu = ui.getMenuFactory().createCategoryFormMenu(parentMenu, ui, null);
+                addOption(new MenuOption(nextOptionNumber(), newCategoryMenu));
+            }
+        }
+        if(this.__type.equals(ITag.class)) {
+            entities = (T[])Stream.of(this.logic.getAllTags()).sorted().toArray(ITag[]::new);
+            setDescription(String.format("Zobrazuji %d značek", entities.length));
+            if(entities.length <= 0) {
+                IMenu newTagMenu = ui.getMenuFactory().createTagFormMenu(parentMenu, ui, null);
+                addOption(new MenuOption(nextOptionNumber(), newTagMenu));
+            }
+        }
+
         IMenu detailMenu;
         for(T e : entities) {
             detailMenu = null;

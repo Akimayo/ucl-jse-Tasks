@@ -4,6 +4,7 @@ import cz.mciesla.ucl.logic.app.entities.definition.ICategory;
 import cz.mciesla.ucl.logic.app.entities.definition.ITag;
 import cz.mciesla.ucl.logic.app.entities.definition.ITask;
 import cz.mciesla.ucl.ui.cli.forms.FormField;
+import cz.mciesla.ucl.ui.cli.menu.system.AssignTagMenu;
 import cz.mciesla.ucl.ui.cli.menu.system.BackMenu;
 import cz.mciesla.ucl.ui.cli.menu.system.DestroyEntityMenu;
 import cz.mciesla.ucl.ui.cli.menu.system.FillFormMenu;
@@ -17,6 +18,7 @@ import cz.mciesla.ucl.ui.cli.menu.user.ListMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.MainMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.SettingsMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.TagsMenu;
+import cz.mciesla.ucl.ui.cli.menu.user.TaskTagsMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.TasksMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.detail.CategoryDetailMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.detail.TagDetailMenu;
@@ -111,12 +113,13 @@ public class MenuFactory implements IMenuFactory {
 
             @Override
             protected void defineForm() {
-                addFormField(new FormField("task", task == null ? "" : Integer.toString(task.getId()), FormFieldType.META));
+                addFormField(
+                        new FormField("task", task == null ? "" : Integer.toString(task.getId()), FormFieldType.META));
                 addFormField(new FormField("title", "Název", FormFieldType.TEXTUAL));
                 addFormField(new FormField("note", "Poznámky", FormFieldType.TEXTUAL));
-                addFormField(new FormField("deadline", "Termín splnění", FormFieldType.DATE));
-                addFormField(new FormField("category", "Kategorie", FormFieldType.CATEGORY_ASSOC));
-                // addFormField(new FormField("tags", "Značky", FormFieldType.TAG_ASSOC));
+                addFormField(new FormField("deadline", "Termín splnění", "Prosím zadejte termín splnění [YYYY-MM-DD]", FormFieldType.DATE, false));
+                addFormField(
+                        new FormField("category", "Kategorie", "Zvolte kategorii", FormFieldType.CATEGORY_ASSOC, true));
             }
         };
     }
@@ -128,7 +131,8 @@ public class MenuFactory implements IMenuFactory {
 
     @Override
     public IMenu createCategoryFormMenu(IMenu parentMenu, IUserInterface ui, ICategory category) {
-        return new FormMenu(parentMenu, "category", category == null ? "Vytvořit kategorii" : "Upravit tuto kategorii") {
+        return new FormMenu(parentMenu, "category",
+                category == null ? "Vytvořit kategorii" : "Upravit tuto kategorii") {
 
             @Override
             protected void build() {
@@ -141,9 +145,10 @@ public class MenuFactory implements IMenuFactory {
 
             @Override
             protected void defineForm() {
-                addFormField(new FormField("category", category == null ? "" : Integer.toString(category.getId()), FormFieldType.META));
+                addFormField(new FormField("category", category == null ? "" : Integer.toString(category.getId()),
+                        FormFieldType.META));
                 addFormField(new FormField("title", "Název", FormFieldType.TEXTUAL));
-                addFormField(new FormField("color", "Barva", FormFieldType.TEXTUAL)); // FIXME: Create new field type for colors
+                addFormField(new FormField("color", "Barva", FormFieldType.COLOR));
             }
         };
     }
@@ -168,9 +173,10 @@ public class MenuFactory implements IMenuFactory {
 
             @Override
             protected void defineForm() {
-                addFormField(new FormField("tag", tag == null ? "" : Integer.toString(tag.getId()), FormFieldType.META));
+                addFormField(
+                        new FormField("tag", tag == null ? "" : Integer.toString(tag.getId()), FormFieldType.META));
                 addFormField(new FormField("title", "Název", FormFieldType.TEXTUAL));
-                addFormField(new FormField("color", "Barva", FormFieldType.TEXTUAL)); // FIXME: Create new field type for colors
+                addFormField(new FormField("color", "Barva", "Prosím vyberte barvu: ", FormFieldType.COLOR, true));
             }
         };
     }
@@ -217,15 +223,28 @@ public class MenuFactory implements IMenuFactory {
 
     @Override
     public <T> IMenu createDestroyMenu(IMenu parentMenu, IUserInterface ui, T entity) {
-        if(entity instanceof ITask) return new DestroyEntityMenu<ITask>(parentMenu, ui, (ITask)entity);
-        if(entity instanceof ICategory) return new DestroyEntityMenu<ICategory>(parentMenu, ui, (ICategory)entity);
-        if(entity instanceof ITag) return new DestroyEntityMenu<ITag>(parentMenu, ui, (ITag)entity);
+        if (entity instanceof ITask)
+            return new DestroyEntityMenu<ITask>(parentMenu, ui, (ITask) entity);
+        if (entity instanceof ICategory)
+            return new DestroyEntityMenu<ICategory>(parentMenu, ui, (ICategory) entity);
+        if (entity instanceof ITag)
+            return new DestroyEntityMenu<ITag>(parentMenu, ui, (ITag) entity);
         return null;
     }
 
     @Override
     public IMenu createMarkDoneMenu(TaskDetailMenu taskDetailMenu, ITask task) {
         return new ToggleDoneMenu(taskDetailMenu, task);
+    }
+
+    @Override
+    public IMenu createTagAssignMenu(IMenu parentMenu, IUserInterface ui, ITag tag, ITask task) {
+        return new AssignTagMenu(parentMenu, ui, tag, task);
+    }
+
+    @Override
+    public IMenu createTaskTagsMenu(IMenu parentMenu, IUserInterface ui, ITask task) {
+        return new TaskTagsMenu(parentMenu, ui, task);
     }
 
 }

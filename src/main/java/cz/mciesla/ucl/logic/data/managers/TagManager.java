@@ -26,8 +26,8 @@ public class TagManager implements ITagManager {
 
     @Override
     public ITag[] getAllTagsForUser(IUser user) {
-        return (ITag[]) this.getDAOsForUserLoggedIn(user).stream().map(i -> mappers.getTagMapper().mapFromDAODeep(i))
-                .toArray();
+        return this.getDAOsForUserLoggedIn(user).stream().map(i -> mappers.getTagMapper().mapFromDAODeep(i))
+                .toArray(ITag[]::new);
     }
 
     private List<TagDAO> getDAOsForUserLoggedIn(IUser user) {

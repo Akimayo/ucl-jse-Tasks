@@ -21,7 +21,6 @@ public class MainMenu extends Menu {
 
     @Override
     protected void build() {
-    	// WTF: Can I edit this?
     	if(logic.isUserLoggedIn()) {
     		/*setDescription("Abyste mohli aplikaci používat, je nutné se nejprve přihlásit.\n\n"
 	                + "Pokud ještě nemáte svůj uživatelský účet, je možné se registrovat.");*/

@@ -33,4 +33,5 @@ public interface IAppLogic extends ICategoryService, IUserService, ITaskService,
     /** Generates mock (testing) data */
     void generateMockData();
     //endregion
+
 }

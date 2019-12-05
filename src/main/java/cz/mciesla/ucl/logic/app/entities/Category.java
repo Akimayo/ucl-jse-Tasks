@@ -50,7 +50,8 @@ public class Category implements ICategory {
     }
 
     private Stream<ITask> getUserTasksStream() {
-        return Stream.of(this.user.getTasks()); // FIXME: Use UserService instead
+        // This would ideally use UserService, but it's difficult to get it here
+        return Stream.of(this.user.getTasks());
     }
 
     @Override
@@ -121,5 +122,10 @@ public class Category implements ICategory {
     public void setTitle(String title) {
         this.title = title;
         this.updatedAt = LocalDateTime.now();
+    }
+
+    @Override
+    public int compareTo(ICategory o) {
+        return this.title.compareTo(o.getTitle());
     }
 }

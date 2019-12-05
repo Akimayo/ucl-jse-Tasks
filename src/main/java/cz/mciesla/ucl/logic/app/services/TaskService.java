@@ -147,6 +147,28 @@ public class TaskService implements ITaskService {
             this.manager.updateTask(target);
         }
     }
+    
+    @Override
+    public void updateTask(int id, ITag tag) {
+        if(this.userService.isUserLoggedIn()) {
+            ITask target = this.manager.getTaskByIdForUser(id, this.userService.getUserLoggedIn());
+            // FIXME: This is really wonky
+            if(Stream.of(target.getTags()).anyMatch(i -> i.getId() == tag.getId()))
+                target.removeTag(tag);
+            else target.addTag(tag);
+            this.manager.updateTask(target);
+        }
+    }
+
+    @Override
+    public void updateTask(int id) {
+        if(this.userService.isUserLoggedIn()) {
+            ITask target = this.manager.getTaskByIdForUser(id, this.userService.getUserLoggedIn());
+            if(target.isDone()) target.reopen();
+            else target.complete();
+            this.manager.updateTask(target);
+        }
+    }
 
     @Override
     public void destroyTask(int id) {

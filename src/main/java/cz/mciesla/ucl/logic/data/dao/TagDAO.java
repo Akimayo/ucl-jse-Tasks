@@ -1,6 +1,7 @@
 package cz.mciesla.ucl.logic.data.dao;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import cz.mciesla.ucl.logic.app.entities.definition.Color;
@@ -13,6 +14,10 @@ public class TagDAO {
     private List<TaskDAO> tasks;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    public TagDAO() {
+        this.tasks = new ArrayList<>();
+    }
 
     public int getId() {
         return id;

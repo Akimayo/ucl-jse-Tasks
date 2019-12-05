@@ -35,4 +35,6 @@ public interface IMenuFactory {
     <T> IMenu createConfirmDestroyMenu(IMenu parentMenu, IUserInterface ui, T entity);
 	<T> IMenu createDestroyMenu(IMenu parentMenu, IUserInterface ui, T entity);
 	IMenu createMarkDoneMenu(TaskDetailMenu taskDetailMenu, ITask task);
+	IMenu createTagAssignMenu(IMenu parentMenu, IUserInterface ui, ITag tag, ITask task);
+	IMenu createTaskTagsMenu(IMenu parentMenu, IUserInterface ui, ITask task);
 }

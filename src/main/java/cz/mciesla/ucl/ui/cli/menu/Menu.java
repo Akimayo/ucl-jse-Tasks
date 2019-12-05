@@ -123,15 +123,7 @@ public abstract class Menu implements IMenu {
     }
     @Override
     public boolean isSystemMenu() {
-        // WTF:
-        switch(this.identifier) {
-            case "back_menu":
-            case "fill_form_menu":
-            case "quit_menu":
-                return true;
-            default:
-                return false;
-        }
+        return this.getType().name().contains("SYSTEM");
     }
     @Override
     public IFormField[] getFormFields() {

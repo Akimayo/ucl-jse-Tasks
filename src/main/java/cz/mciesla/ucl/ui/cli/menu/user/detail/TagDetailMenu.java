@@ -34,9 +34,12 @@ public class TagDetailMenu extends Menu {
         this.setDescription(this.formatter.formatTag(this.tag));
         
         IMenu backMenu = this.ui.getMenuFactory().createBackMenu(this.parentMenu);
-        // TODO: Options
+        IMenu editMenu = this.ui.getMenuFactory().createTagFormMenu(this.parentMenu, this.ui, this.tag);
+        IMenu destroyMenu = this.ui.getMenuFactory().createDestroyMenu(this.parentMenu, this.ui, this.tag);
 
         this.addOption(new MenuOption(this.nextOptionNumber(), backMenu));
+        this.addOption(new MenuOption(this.nextOptionNumber(), editMenu));
+        this.addOption(new MenuOption(this.nextOptionNumber(), destroyMenu));
     }
 
 }

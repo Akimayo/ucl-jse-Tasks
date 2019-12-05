@@ -46,6 +46,8 @@ public interface ITaskService {
 
     /** Finds a task by its ID and updates it */
     void updateTask(int id, String title, String note, ICategory category, LocalDate deadline);
+    void updateTask(int id);
+    void updateTask(int id, ITag tag);
 
     /** Finds a task by its ID and destroys it */
     void destroyTask(int id);

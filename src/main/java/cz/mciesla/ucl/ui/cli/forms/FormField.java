@@ -34,7 +34,7 @@ public class FormField implements IFormField {
 
     @Override
     public String getLabel() {
-        return this.label;
+        return this.label + (this.required ? "*" : "");
     }
 
     @Override

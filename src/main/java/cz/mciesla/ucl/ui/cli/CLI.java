@@ -6,6 +6,7 @@ import cz.mciesla.ucl.logic.exceptions.InvalidCredentialsException;
 import cz.mciesla.ucl.logic.exceptions.NotLoggedInException;
 import cz.mciesla.ucl.ui.cli.forms.FormManager;
 import cz.mciesla.ucl.ui.cli.menu.MenuFactory;
+import cz.mciesla.ucl.ui.cli.menu.system.AssignTagMenu;
 import cz.mciesla.ucl.ui.cli.menu.system.DestroyEntityMenu;
 import cz.mciesla.ucl.ui.cli.menu.system.ToggleDoneMenu;
 import cz.mciesla.ucl.ui.cli.views.*;
@@ -28,6 +29,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class CLI implements ICLI {
     private IMenuFactory menuFactory;
@@ -86,7 +88,6 @@ public class CLI implements ICLI {
 
     @Override
     public String promptString() {
-        // WTF: Y U NO WORK?!
         return this.sc.nextLine();
     }
 
@@ -132,7 +133,6 @@ public class CLI implements ICLI {
         case "main_menu":
             actionDashboard(fromMenu);
             break;
-        // TODO: Add all other app logics
         }
     }
     // endregion
@@ -159,10 +159,17 @@ public class CLI implements ICLI {
     private void actionRegister(IMenu menu, Map<String, String> data) {
         try {
             logic.registerUser(data.get("email"), data.get("username"), data.get("password"));
+            logic.loginUser(data.get("email"), data.get("password"));
+            for(String title : new String[] {"UCL", "JSE", "WEB", "3DT", "PR1", "PES", "Nákupy", "Wishlist"})
+                this.logic.createTag(title);
+            for(String title : new String[] {"Osobní", "Škola", "Práce"})
+                this.logic.createCategory(title);
+            // TODO: Default tasks
+            logic.logoutUser();
             drawMessage("Registrace proběhla úspěšně");
         } catch (EmailAddressAlreadyUsedException e) {
             drawError(e.getMessage());
-        }
+        } catch(AlreadyLoggedInException | InvalidCredentialsException | NotLoggedInException e) {}
     }
 
     private void actionTask(IMenu fromMenu, Map<String, String> formData) {
@@ -190,11 +197,11 @@ public class CLI implements ICLI {
     private void actionTag(IMenu fromMenu, Map<String, String> formData) {
         try {
             if (formData.get("tag").equals("")) {
-                this.logic.createTag(formData.get("title"), Color.values()[Integer.parseInt(formData.get("color"))]); // TODO: Improve color selection
+                this.logic.createTag(formData.get("title"), Color.values()[Integer.parseInt(formData.get("color"))]);
                 drawMessage("Značka byla úspěšně vytvořena");
             } else {
                 int sourceId = Integer.parseInt(formData.get("tag"));
-                this.logic.updateTag(sourceId, formData.get("title"), null); // FIXME: Color selection
+                this.logic.updateTag(sourceId, formData.get("title"), Color.values()[Integer.parseInt(formData.get("color"))]);
                 drawMessage("Značka byla úspěšně uložena");
             }
         } catch (NullPointerException e) {
@@ -206,11 +213,11 @@ public class CLI implements ICLI {
         try {
             if (formData.get("category").equals("")) {
                 this.logic.createCategory(formData.get("title"),
-                        Color.values()[Integer.parseInt(formData.get("color"))]); // TODO: Improve color selection
+                        Color.values()[Integer.parseInt(formData.get("color"))]);
                 drawMessage("Kategorie byla úspěšně vytvořena");
             } else {
                 int sourceId = Integer.parseInt(formData.get("category"));
-                this.logic.updateCategory(sourceId, formData.get("title"), null); // FIXME: Color selection
+                this.logic.updateCategory(sourceId, formData.get("title"), Color.values()[Integer.parseInt(formData.get("color"))]);
                 drawMessage("Kategorie byla úsěšně uložena");
             }
         } catch (NullPointerException e) {
@@ -262,7 +269,6 @@ public class CLI implements ICLI {
     private String __spacer = null;
 
     private IMenu handleUserMenuChange(IMenu currentMenu, IMenu nextMenu) {
-        // WTF: What's the purpose of currentMenu?
         if (this.__spacer == null) {
             this.__spacer = "";
             for (int i = 0; i < 10; i++)
@@ -315,7 +321,7 @@ public class CLI implements ICLI {
                 DestroyEntityMenu<?> menu = (DestroyEntityMenu<?>)nextMenu;
                 if(menu.getEntity() instanceof ITask) this.logic.destroyTask(((ITask)menu.getEntity()).getId());
                 if(menu.getEntity() instanceof ICategory) this.logic.destroyCategory(((ICategory)menu.getEntity()).getId());
-                if(menu.getEntity() instanceof ITag) this.logic.destroyCategory(((ITag)menu.getEntity()).getId());
+                if(menu.getEntity() instanceof ITag) this.logic.destroyTag(((ITag)menu.getEntity()).getId());
             } catch (NullPointerException e) {
                 drawError(e.getMessage());
             } finally {
@@ -324,8 +330,21 @@ public class CLI implements ICLI {
             break;
         case SYSTEM_TOGGLE_DONE:
             ToggleDoneMenu menu = (ToggleDoneMenu)nextMenu;
+            // For current instance
             if(menu.getEntity().isDone()) menu.getEntity().reopen();
             else menu.getEntity().complete();
+            // For persistance
+            this.logic.updateTask(menu.getEntity().getId());
+            nextMenu = currentMenu;
+            break;
+        case SYSTEM_ASSIGN:
+            AssignTagMenu assignMenu = (AssignTagMenu)nextMenu;
+            // For current instance
+            if(Stream.of(assignMenu.getTask().getTags()).anyMatch(i -> i.equals(assignMenu.getTag()))) assignMenu.getTask().removeTag(assignMenu.getTag());
+            else assignMenu.getTask().addTag(assignMenu.getTag());
+            // For persistance
+            this.logic.updateTask(assignMenu.getTask().getId(), assignMenu.getTag());
+            nextMenu = assignMenu.getParentMenu();
             break;
         default:
             throw new RuntimeException(nextMenu.getType() + " is not valid type of system menu ");
@@ -352,6 +371,22 @@ public class CLI implements ICLI {
                         drawError("Vložená hodnota není datum");
                     }
                     break;
+                case COLOR:
+                    Color[] colors = Color.values();
+                    this.drawPrompt("Barva: ");
+                    StringBuilder clrout = new StringBuilder();
+                    for(int i = 1; i <= colors.length; i++) {
+                        clrout.append(i + ": " + colors[i-1].name() + "    ");
+                    }
+                    this.drawPrompt(clrout.toString());
+                    int colorIndex = -1;
+                    do {
+                        this.drawPrompt(field.getLabel());
+                        System.out.print(" : ");
+                        colorIndex = this.promptNumber();
+                    } while(colorIndex <= 0 || colorIndex > colors.length + 1);
+                    ret.put(field.getIdentifier(), Integer.toString(colorIndex - 1));
+                    continue;
                 case CATEGORY_ASSOC:
                     ICategory[] categories = this.logic.getAllCategories();
                     if(categories.length <= 0) continue;
@@ -362,13 +397,14 @@ public class CLI implements ICLI {
                         if(i % 4 == 0) cout.append(System.lineSeparator());
                     }
                     this.drawPrompt(cout.toString());
-                    int index = -1;
+                    int categoryIndex = -1;
                     do {
                         this.drawPrompt(field.getLabel());
-                        index = this.promptNumber();
-                    } while(index <= 0 || index > categories.length + 1);
-                    if(index == 1) ret.put(field.getIdentifier(), "");
-                    else ret.put(field.getIdentifier(), Integer.toString(categories[index - 2].getId()));
+                        System.out.print(" : ");
+                        categoryIndex = this.promptNumber();
+                    } while(categoryIndex <= 0 || categoryIndex > categories.length + 1);
+                    if(categoryIndex == 1) ret.put(field.getIdentifier(), "");
+                    else ret.put(field.getIdentifier(), Integer.toString(categories[categoryIndex - 2].getId()));
                     continue;
                 default:
                     in = getInput(field);

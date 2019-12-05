@@ -34,10 +34,12 @@ public class CategoryDetailMenu extends Menu {
         this.setDescription(this.formatter.formatCategory(this.category));
 
         IMenu backMenu = this.ui.getMenuFactory().createBackMenu(this.parentMenu);
-        // TODO: Options
+        IMenu editMenu = this.ui.getMenuFactory().createCategoryFormMenu(this.parentMenu, this.ui, this.category);
+        IMenu destroyMenu = this.ui.getMenuFactory().createDestroyMenu(this.parentMenu, this.ui, this.category);
 
         this.addOption(new MenuOption(this.nextOptionNumber(), backMenu));
-
+        this.addOption(new MenuOption(this.nextOptionNumber(), editMenu));
+        this.addOption(new MenuOption(this.nextOptionNumber(), destroyMenu));
     }
 
 }

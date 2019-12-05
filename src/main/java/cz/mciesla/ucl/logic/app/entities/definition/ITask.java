@@ -3,7 +3,7 @@ package cz.mciesla.ucl.logic.app.entities.definition;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public interface ITask {
+public interface ITask extends Comparable<ITask> {
     //region Getters
     int getId();
 
@@ -49,4 +49,6 @@ public interface ITask {
     void setCategory(ICategory category);
 
     void setDeadline(LocalDate deadline);
+
+	void removeTag(ITag tag);
 }

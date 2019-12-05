@@ -1,6 +1,7 @@
 package cz.mciesla.ucl.logic;
 
 import java.time.LocalDate;
+import java.util.stream.Stream;
 
 import cz.mciesla.ucl.logic.app.entities.definition.Color;
 import cz.mciesla.ucl.logic.app.entities.definition.ICategory;
@@ -112,23 +113,25 @@ public class Program implements IAppLogic {
 
     @Override
     public ITask[] getTasksFilteredByCategory(String categoryTitle) {
-        // TODO: String-based search
-        // (Probably after hooking up DTO - using database query for ID)
-        return null;
+        return this.taskService.getAllTasksByCategory(Stream.of(this.categoryService.getAllCategories())
+                .filter(i -> i.getTitle().equals(categoryTitle)).findFirst().get());
     }
 
     @Override
     public ITask[] getTasksFilteredByTags(String[] tagTitles) {
-        // TODO: String-based search
-        // (Probably after hooking up DTO - using database query for ID)
-        return null;
+        Stream<String> tagTitleStream = Stream.of(tagTitles);
+        return this.taskService.getAllTasksByTags(Stream.of(this.tagService.getAllTags())
+                .filter(i -> tagTitleStream.anyMatch(j -> j.equals(i.getTitle()))).toArray(ITag[]::new));
     }
 
     @Override
     public ITask[] getTasksFilteredByCategoryAndTags(String categoryTitle, String[] tagTitles) {
-        // TODO: String-based search (using taskService.getAllTasksByTags)
-        // (Probably after hooking up DTO - using databse query for ID)
-        return null;
+        Stream<String> tagTitleStream = Stream.of(tagTitles);
+        return this.taskService.getAllTasksByTags(
+                Stream.of(this.tagService.getAllTags())
+                        .filter(i -> tagTitleStream.anyMatch(j -> j.equals(i.getTitle()))).toArray(ITag[]::new),
+                Stream.of(this.categoryService.getAllCategories()).filter(i -> i.getTitle().equals(categoryTitle))
+                        .findFirst().get());
     }
 
     @Override
@@ -224,6 +227,16 @@ public class Program implements IAppLogic {
     @Override
     public void destroyTag(int id) {
         this.tagService.destroyTag(id);
+    }
+
+    @Override
+    public void updateTask(int id) {
+        this.taskService.updateTask(id);
+    }
+
+    @Override
+    public void updateTask(int id, ITag tag) {
+        this.taskService.updateTask(id, tag);
     }
 
 }

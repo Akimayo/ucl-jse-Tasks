@@ -20,11 +20,15 @@ public class CategoryView implements ICategoryView {
 
     @Override
     public String formatCategory(ICategory category) {
-        String ret = "Kategorie " + category.getTitle();
-        for (ITask task : category.getTasks()) {
-            ret += System.lineSeparator() + "    " + task.getTitle();
+        StringBuilder ret = new StringBuilder("= Barva: " + category.getColor().name() + " =" + System.lineSeparator());
+        ITask[] catTasks = category.getTasks();
+        if(catTasks.length > 0) ret.append("= " + catTasks.length + " úkolů =");
+        else ret.append("= Zatím žádné úkoly =");
+        ret.append(System.lineSeparator());
+        for (ITask task : catTasks) {
+            ret.append(System.lineSeparator() + "    " + task.getTitle());
         }
-        return ret;
+        return ret.toString();
     }
 
     

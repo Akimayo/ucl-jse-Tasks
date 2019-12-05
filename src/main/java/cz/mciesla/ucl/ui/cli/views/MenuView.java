@@ -9,31 +9,26 @@ public class MenuView implements IMenuView {
 
     @Override
     public String formatMenuOption(IMenuOption option) {
-        // TODO: Number padding
         return option.getNumber() + ": " + option.getTitle();
     }
 
     @Override
     public String formatMenu(Menu menu) {
-        // WTF: TODO: Options/Forms?
         return null;
     }
 
     @Override
     public String drawDescription(Menu menu) {
-        // TODO: Prettify (Align to center?)
         return menu.getDescription();
     }
 
     @Override
     public String drawHeader(IMenu currentMenu) {
-        // TODO: Prettify (Border?)
         return currentMenu.getTitle();
     }
 
     @Override
     public String drawSeparator() {
-        // WTF: What does a separator separate?
         String ret = "";
         for(int i = 0; i < 10; i++)
             ret += this.drawNewLine();

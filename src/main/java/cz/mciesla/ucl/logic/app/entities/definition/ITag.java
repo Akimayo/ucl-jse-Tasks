@@ -2,7 +2,7 @@ package cz.mciesla.ucl.logic.app.entities.definition;
 
 import java.time.LocalDateTime;
 
-public interface ITag extends ITaskOwner {
+public interface ITag extends ITaskOwner, Comparable<ITag> {
     int getId();
     IUser getUser();
     String getTitle();

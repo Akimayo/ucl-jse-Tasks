@@ -38,14 +38,14 @@ public class TaskView implements ITaskView {
             catLength = task.getCategory().getTitle().length();
             iterCount++;
         }
-        for (int i = 0; i < 16 - catLength; i++)
+        for (int i = 0; i < 16 - 9; i++)
             ret.append(" ");
         ret.append("Značky");
         if(task.getTags().length > iterCount) iterCount = task.getTags().length;
         for (int i = 0; i < iterCount; i++) {
             ret.append(System.lineSeparator()).append("    ");
             if (i == 0) {
-                ret.append(task.getCategory().getTitle());
+                if(task.getCategory() != null) ret.append(task.getCategory().getTitle());
                 for (int j = 0; j < 16 - catLength; j++)
                     ret.append(" ");
             } else {
