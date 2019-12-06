@@ -32,4 +32,7 @@ public interface IUserService {
 
     /** Destroys a logged in, registered user */
     void destroyUserLoggedIn() throws NotLoggedInException;
+
+	void updateUserLoggedIn(String email, String username, String checkedPassword);
+
 }

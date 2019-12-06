@@ -18,10 +18,12 @@ public class SettingsMenu extends Menu {
         IMenu backMenu = ui.getMenuFactory().createBackMenu(this);
         IMenu categoriesMenu = ui.getMenuFactory().createCategoriesMenu(this, ui);
         IMenu tagsMenu = ui.getMenuFactory().createTagsMenu(this, ui);
+        IMenu userMenu = ui.getMenuFactory().createUserEditMenu(this.parentMenu, ui);
 
         addOption(new MenuOption(nextOptionNumber(), backMenu));
         addOption(new MenuOption(nextOptionNumber(), categoriesMenu));
         addOption(new MenuOption(nextOptionNumber(), tagsMenu));
+        addOption(new MenuOption(nextOptionNumber(), userMenu));
     }
 
 }

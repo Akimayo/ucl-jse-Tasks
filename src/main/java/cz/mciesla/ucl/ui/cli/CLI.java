@@ -19,6 +19,7 @@ import cz.mciesla.ucl.logic.app.entities.definition.Color;
 import cz.mciesla.ucl.logic.app.entities.definition.ICategory;
 import cz.mciesla.ucl.logic.app.entities.definition.ITag;
 import cz.mciesla.ucl.logic.app.entities.definition.ITask;
+import cz.mciesla.ucl.logic.app.entities.definition.IUser;
 import cz.mciesla.ucl.ui.definition.menu.IMenuFactory;
 import cz.mciesla.ucl.ui.definition.menu.IMenuOption;
 import cz.mciesla.ucl.ui.definition.views.*;
@@ -125,6 +126,9 @@ public class CLI implements ICLI {
         case "tag":
             actionTag(fromMenu, formData);
             break;
+        case "user":
+            actionUserUpdate(fromMenu, formData);
+            break;
         }
     }
 
@@ -222,6 +226,19 @@ public class CLI implements ICLI {
             }
         } catch (NullPointerException e) {
             drawError("Tato kategorie již neexistuje nebo byl uživatel odhlášen");
+        }
+    }
+
+    private void actionUserUpdate(IMenu fromMenu, Map<String, String> formData) {
+        if(this.logic.getUserLoggedIn().getPassword().equals(formData.get("old_password"))) {
+            if(formData.get("new_password").equals(formData.get("new_confirm"))) {
+                // TODO: User update
+                this.logic.updateUserLoggedIn(formData.get("email"), formData.get("username"), formData.get("new_password"));
+            } else {
+                this.drawError("Nová hesla se neshodují");
+            }
+        } else {
+            this.drawError("Staré heslo je nesprávné");
         }
     }
     // endregion
@@ -322,7 +339,8 @@ public class CLI implements ICLI {
                 if(menu.getEntity() instanceof ITask) this.logic.destroyTask(((ITask)menu.getEntity()).getId());
                 if(menu.getEntity() instanceof ICategory) this.logic.destroyCategory(((ICategory)menu.getEntity()).getId());
                 if(menu.getEntity() instanceof ITag) this.logic.destroyTag(((ITag)menu.getEntity()).getId());
-            } catch (NullPointerException e) {
+                if(menu.getEntity() instanceof IUser) this.logic.destroyUserLoggedIn();
+            } catch (NullPointerException | NotLoggedInException e) {
                 drawError(e.getMessage());
             } finally {
                 nextMenu = currentMenu.getParentMenu();

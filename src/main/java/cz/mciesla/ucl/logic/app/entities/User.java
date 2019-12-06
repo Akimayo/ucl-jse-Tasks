@@ -159,4 +159,44 @@ public class User implements IUser, ITaskOwner {
         return this.updatedAt;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + id;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        User other = (User) obj;
+        if (id != other.id)
+            return false;
+        return true;
+    }
+
+    @Override
+    public void setEmail(String email) {
+        this.email = email;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @Override
+    public void setUsername(String username) {
+        this.username = username;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @Override
+    public void setPassword(String checkedPassword) {
+        this.password = checkedPassword;
+        this.updatedAt = LocalDateTime.now();
+    }
+
 }

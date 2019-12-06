@@ -239,4 +239,9 @@ public class Program implements IAppLogic {
         this.taskService.updateTask(id, tag);
     }
 
+    @Override
+    public void updateUserLoggedIn(String email, String username, String checkedPassword) {
+        this.userService.updateUserLoggedIn(email, username, checkedPassword);
+    }
+
 }

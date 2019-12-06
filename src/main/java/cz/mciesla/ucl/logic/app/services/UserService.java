@@ -67,5 +67,15 @@ public class UserService implements IUserService {
             this.loggedInUser = null;
         } else throw new NotLoggedInException("Není přihlášen žádný uživatel.");
     }
-    
+
+    @Override
+    public void updateUserLoggedIn(String email, String username, String checkedPassword) {
+        if(this.loggedInUser != null) {
+            this.loggedInUser.setEmail(email);
+            this.loggedInUser.setUsername(username);
+            this.loggedInUser.setPassword(checkedPassword);
+            this.manager.updateUser(this.loggedInUser);
+        }
+    }
+
 }

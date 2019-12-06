@@ -3,6 +3,7 @@ package cz.mciesla.ucl.ui.cli.menu;
 import cz.mciesla.ucl.logic.app.entities.definition.ICategory;
 import cz.mciesla.ucl.logic.app.entities.definition.ITag;
 import cz.mciesla.ucl.logic.app.entities.definition.ITask;
+import cz.mciesla.ucl.logic.app.entities.definition.IUser;
 import cz.mciesla.ucl.ui.cli.forms.FormField;
 import cz.mciesla.ucl.ui.cli.menu.system.AssignTagMenu;
 import cz.mciesla.ucl.ui.cli.menu.system.BackMenu;
@@ -20,6 +21,7 @@ import cz.mciesla.ucl.ui.cli.menu.user.SettingsMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.TagsMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.TaskTagsMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.TasksMenu;
+import cz.mciesla.ucl.ui.cli.menu.user.UserEditMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.detail.CategoryDetailMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.detail.TagDetailMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.detail.TaskDetailMenu;
@@ -117,7 +119,8 @@ public class MenuFactory implements IMenuFactory {
                         new FormField("task", task == null ? "" : Integer.toString(task.getId()), FormFieldType.META));
                 addFormField(new FormField("title", "Název", FormFieldType.TEXTUAL));
                 addFormField(new FormField("note", "Poznámky", FormFieldType.TEXTUAL));
-                addFormField(new FormField("deadline", "Termín splnění", "Prosím zadejte termín splnění [YYYY-MM-DD]", FormFieldType.DATE, false));
+                addFormField(new FormField("deadline", "Termín splnění", "Prosím zadejte termín splnění [YYYY-MM-DD]",
+                        FormFieldType.DATE, false));
                 addFormField(
                         new FormField("category", "Kategorie", "Zvolte kategorii", FormFieldType.CATEGORY_ASSOC, true));
             }
@@ -229,6 +232,8 @@ public class MenuFactory implements IMenuFactory {
             return new DestroyEntityMenu<ICategory>(parentMenu, ui, (ICategory) entity);
         if (entity instanceof ITag)
             return new DestroyEntityMenu<ITag>(parentMenu, ui, (ITag) entity);
+        if (entity instanceof IUser)
+            return new DestroyEntityMenu<IUser>(parentMenu, ui, (IUser) entity);
         return null;
     }
 
@@ -245,6 +250,47 @@ public class MenuFactory implements IMenuFactory {
     @Override
     public IMenu createTaskTagsMenu(IMenu parentMenu, IUserInterface ui, ITask task) {
         return new TaskTagsMenu(parentMenu, ui, task);
+    }
+
+    @Override
+    public IMenu createUserEditMenu(IMenu parentMenu, IUserInterface ui) {
+        return new UserEditMenu(parentMenu, ui);
+    }
+
+    @Override
+    public IMenu createUserEditFormMenu(IMenu parentMenu, IUserInterface ui) {
+        return new FormMenu(parentMenu, "user_edit", "Upravit účet") {
+
+            @Override
+            protected void build() {
+                IMenu backMenu = this.ui.getMenuFactory().createBackMenu(this.parentMenu);
+                IMenu fillMenu = this.ui.getMenuFactory().createFillFormMenu(this.parentMenu);
+
+                addOption(new MenuOption(nextOptionNumber(), backMenu));
+                addOption(new MenuOption(nextOptionNumber(), fillMenu));
+            }
+
+            @Override
+            protected void defineForm() {
+                addFormField(new FormField("username", "Uživatelské jméno", FormFieldType.TEXTUAL));
+                addFormField(new FormField("email", "E-mail", FormFieldType.TEXTUAL));
+                addFormField(new FormField("old_password", "Staré heslo", FormFieldType.SECURE));
+                addFormField(new FormField("new_password", "Nové heslo", FormFieldType.SECURE));
+                addFormField(new FormField("new_confirm", "Potvrdit nové heslo", FormFieldType.SECURE));
+                // TODO: Create action
+            }
+        };
+    }
+
+    @Override
+    public IMenu createUserDestroyConfirmMenu(IMenu parentMenu, IUserInterface ui) {
+        return new ConfirmDestroyEntityMenu<IUser>(parentMenu, ui, ui.getLogic().getUserLoggedIn());
+    }
+
+    @Override
+    public IMenu createUserDestroyMenu(IMenu mainMenu, IUserInterface ui) {
+        // TODO Auto-generated method stub
+        return new DestroyEntityMenu<IUser>(mainMenu, ui, ui.getLogic().getUserLoggedIn());
     }
 
 }

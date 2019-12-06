@@ -22,5 +22,9 @@ public interface IUser extends ITaskOwner {
     void addTag(ITag tag);
     int tagsCount();
 	LocalDateTime getCreatedAt();
-	LocalDateTime getUpdatedAt();
+    LocalDateTime getUpdatedAt();
+
+    void setEmail(String email);
+    void setUsername(String username);
+    void setPassword(String checkedPassword);
 }
