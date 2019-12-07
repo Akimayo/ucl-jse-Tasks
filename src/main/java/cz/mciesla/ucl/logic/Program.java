@@ -1,6 +1,8 @@
 package cz.mciesla.ucl.logic;
 
 import java.time.LocalDate;
+import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Stream;
 
 import cz.mciesla.ucl.logic.app.entities.definition.Color;
@@ -113,25 +115,39 @@ public class Program implements IAppLogic {
 
     @Override
     public ITask[] getTasksFilteredByCategory(String categoryTitle) {
-        return this.taskService.getAllTasksByCategory(Stream.of(this.categoryService.getAllCategories())
-                .filter(i -> i.getTitle().equals(categoryTitle)).findFirst().get());
+        Optional<ICategory> categoryPot = Stream.of(this.categoryService.getAllCategories())
+                .filter(i -> i.getTitle().equals(categoryTitle)).findFirst();
+        if (categoryPot.isPresent())
+            return this.taskService.getAllTasksByCategory(categoryPot.get());
+        else
+            return new ITask[0];
     }
 
     @Override
     public ITask[] getTasksFilteredByTags(String[] tagTitles) {
-        Stream<String> tagTitleStream = Stream.of(tagTitles);
+        /* More efficient than (§), but fails on IllegalStateException */
+        // Stream<String> tagTitleStream = Stream.of(tagTitles);
         return this.taskService.getAllTasksByTags(Stream.of(this.tagService.getAllTags())
-                .filter(i -> tagTitleStream.anyMatch(j -> j.equals(i.getTitle()))).toArray(ITag[]::new));
+                .filter(
+                    /*   (§) */
+                    i -> Stream.of(tagTitles).anyMatch(
+                        j -> j != null && j.equals(i.getTitle())
+                    )
+                ).toArray(ITag[]::new));
     }
 
     @Override
     public ITask[] getTasksFilteredByCategoryAndTags(String categoryTitle, String[] tagTitles) {
         Stream<String> tagTitleStream = Stream.of(tagTitles);
-        return this.taskService.getAllTasksByTags(
-                Stream.of(this.tagService.getAllTags())
-                        .filter(i -> tagTitleStream.anyMatch(j -> j.equals(i.getTitle()))).toArray(ITag[]::new),
-                Stream.of(this.categoryService.getAllCategories()).filter(i -> i.getTitle().equals(categoryTitle))
-                        .findFirst().get());
+        Optional<ICategory> categoryPot = Stream.of(this.categoryService.getAllCategories())
+                .filter(i -> i.getTitle().equals(categoryTitle)).findFirst();
+        if (categoryPot.isPresent())
+            return this.taskService.getAllTasksByTags(
+                    Stream.of(this.tagService.getAllTags())
+                            .filter(i -> tagTitleStream.anyMatch(j -> j.equals(i.getTitle()))).toArray(ITag[]::new),
+                    categoryPot.get());
+        else
+            return new ITask[0];
     }
 
     @Override
@@ -142,10 +158,32 @@ public class Program implements IAppLogic {
     @Override
     public void generateMockData() {
         try {
-            userService.registerUser("a@b.c", "ferda", "kulomet");
-            userService.loginUser("a@b.c", "kulomet");
-            // TODO: Generate mock data
-        } catch (EmailAddressAlreadyUsedException | AlreadyLoggedInException | InvalidCredentialsException e) {
+            userService.registerUser("shrek@farfaraway.swamp", "shrek_the_ogre", "onions4life");
+            userService.loginUser("shrek@farfaraway.swamp", "onions4life");
+            for (int i = 0; i < 20; i++)
+                categoryService.createCategory("Kategorie " + i);
+            for (int i = 0; i < 50; i++)
+                tagService.createTag("Značka " + i);
+            Random rnd = new Random();
+            ITask[] tasksMemoryHelper;
+            ICategory[] allCategories = categoryService.getAllCategories();
+            ITag[] allTags = tagService.getAllTags();
+            for (int i = 0; i < 400; i++) {
+                int flags = rnd.nextInt(4);
+                ICategory taskCategory = null;
+                if ((flags & 2) > 0)
+                    taskCategory = allCategories[rnd.nextInt(allCategories.length)];
+                taskService.createTask("Task " + i, "", taskCategory, null);
+                if ((flags & 1) > 0) {
+                    tasksMemoryHelper = taskService.getAllTasks();
+                    ITask thisTask = tasksMemoryHelper[tasksMemoryHelper.length - 1];
+                    for (int j = rnd.nextInt(11); j > 0; j--)
+                        taskService.updateTask(thisTask.getId(), allTags[rnd.nextInt(allTags.length)]);
+                }
+
+            }
+            userService.logoutUser();
+        } catch (EmailAddressAlreadyUsedException | AlreadyLoggedInException | InvalidCredentialsException | NotLoggedInException e) {
         }
     }
 

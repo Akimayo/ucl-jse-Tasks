@@ -11,6 +11,7 @@ import cz.mciesla.ucl.ui.cli.menu.system.DestroyEntityMenu;
 import cz.mciesla.ucl.ui.cli.menu.system.FillFormMenu;
 import cz.mciesla.ucl.ui.cli.menu.system.LogoutMenu;
 import cz.mciesla.ucl.ui.cli.menu.system.QuitMenu;
+import cz.mciesla.ucl.ui.cli.menu.system.SetOrderMenu;
 import cz.mciesla.ucl.ui.cli.menu.system.ToggleDoneMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.CategoriesMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.ConfirmLogoutMenu;
@@ -21,6 +22,8 @@ import cz.mciesla.ucl.ui.cli.menu.user.SettingsMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.TagsMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.TaskTagsMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.TasksMenu;
+import cz.mciesla.ucl.ui.cli.menu.user.TasksOrderMenu;
+import cz.mciesla.ucl.ui.cli.menu.user.TutorialMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.UserEditMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.detail.CategoryDetailMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.detail.TagDetailMenu;
@@ -43,7 +46,7 @@ public class MenuFactory implements IMenuFactory {
 
     @Override
     public IMenu createBackMenu(IMenu parentMenu) {
-        return new BackMenu(parentMenu, "Zpět");
+        return new BackMenu(parentMenu, "< Zpět");
     }
 
     @Override
@@ -118,7 +121,7 @@ public class MenuFactory implements IMenuFactory {
                 addFormField(
                         new FormField("task", task == null ? "" : Integer.toString(task.getId()), FormFieldType.META));
                 addFormField(new FormField("title", "Název", FormFieldType.TEXTUAL));
-                addFormField(new FormField("note", "Poznámky", FormFieldType.TEXTUAL));
+                addFormField(new FormField("note", "Poznámky", "Prosím zadejte poznámku", FormFieldType.TEXTUAL, false));
                 addFormField(new FormField("deadline", "Termín splnění", "Prosím zadejte termín splnění [YYYY-MM-DD]",
                         FormFieldType.DATE, false));
                 addFormField(
@@ -277,7 +280,6 @@ public class MenuFactory implements IMenuFactory {
                 addFormField(new FormField("old_password", "Staré heslo", FormFieldType.SECURE));
                 addFormField(new FormField("new_password", "Nové heslo", FormFieldType.SECURE));
                 addFormField(new FormField("new_confirm", "Potvrdit nové heslo", FormFieldType.SECURE));
-                // TODO: Create action
             }
         };
     }
@@ -289,8 +291,46 @@ public class MenuFactory implements IMenuFactory {
 
     @Override
     public IMenu createUserDestroyMenu(IMenu mainMenu, IUserInterface ui) {
-        // TODO Auto-generated method stub
         return new DestroyEntityMenu<IUser>(mainMenu, ui, ui.getLogic().getUserLoggedIn());
+    }
+
+    @Override
+    public IMenu createSetTasksOrderMenu(IMenu parentMenu) {
+        return new SetOrderMenu(parentMenu);
+    }
+
+    @Override
+    public IMenu createTasksOrderMenu(IMenu parentMenu, IUserInterface ui) {
+        return new TasksOrderMenu(parentMenu, ui);
+    }
+
+    @Override
+    public IMenu createFilterFormMenu(IMenu parentMenu, IUserInterface ui, boolean clearFilter) {
+        return new FormMenu(parentMenu, "filter", clearFilter ? "Zrušit filtry" : "Filtrovat úkoly podle...") {
+        
+            @Override
+            protected void build() {
+                IMenu backMenu = this.ui.getMenuFactory().createBackMenu(this.parentMenu);
+                IMenu fillMenu = this.ui.getMenuFactory().createFillFormMenu(this.parentMenu);
+
+                addOption(new MenuOption(nextOptionNumber(), backMenu));
+                addOption(new MenuOption(nextOptionNumber(), fillMenu));
+            }
+        
+            @Override
+            protected void defineForm() {
+                if(!clearFilter) {
+                    addFormField(new FormField("type", "Filtrovat podle", "Filtrovat podle", FormFieldType.FILTER, true));
+                    addFormField(new FormField("category", "Kategorie", "Název kategorie", FormFieldType.TEXTUAL, false));
+                    addFormField(new FormField("tags", "Značky", "Názvy značek (oddělené čárkou)", FormFieldType.TEXTUAL, false));
+                } else addFormField(new FormField("clear", "", FormFieldType.META));
+            }
+        };
+    }
+
+    @Override
+    public IMenu createTutorial(IMenu parentMenu) {
+        return new TutorialMenu(parentMenu);
     }
 
 }

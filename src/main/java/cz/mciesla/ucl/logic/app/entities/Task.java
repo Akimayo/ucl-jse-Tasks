@@ -52,11 +52,10 @@ public class Task implements ITask {
     }
 
     public Task(IUser userEntity, int id, String title, String note, boolean done, ICategory category,
-            LocalDate deadline, List<ITag> tags, LocalDateTime createdAt, LocalDateTime updatedAt) {
+            LocalDate deadline, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this(userEntity, title, note, category, deadline);
         this.id = id;
         this.done = done;
-        this.tags = tags;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -168,6 +167,11 @@ public class Task implements ITask {
     public void setDeadline(LocalDate deadline) {
         this.deadline = deadline;
         this.updatedAt = LocalDateTime.now();
+    }
+
+    @Override
+    public void setTags(List<ITag> tags) {
+        this.tags = tags;
     }
 
     @Override

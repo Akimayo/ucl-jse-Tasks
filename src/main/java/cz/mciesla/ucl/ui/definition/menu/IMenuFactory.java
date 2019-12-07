@@ -3,6 +3,7 @@ package cz.mciesla.ucl.ui.definition.menu;
 import cz.mciesla.ucl.logic.app.entities.definition.ICategory;
 import cz.mciesla.ucl.logic.app.entities.definition.ITag;
 import cz.mciesla.ucl.logic.app.entities.definition.ITask;
+import cz.mciesla.ucl.ui.cli.menu.user.MainMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.detail.TaskDetailMenu;
 import cz.mciesla.ucl.ui.definition.IUserInterface;
 
@@ -41,4 +42,8 @@ public interface IMenuFactory {
     IMenu createUserEditFormMenu(IMenu parentMenu, IUserInterface ui);
     IMenu createUserDestroyConfirmMenu(IMenu parentMenu, IUserInterface ui);
     IMenu createUserDestroyMenu(IMenu mainMenu, IUserInterface ui);
+	IMenu createSetTasksOrderMenu(IMenu parentMenu);
+	IMenu createTasksOrderMenu(IMenu parentMenu, IUserInterface ui);
+	IMenu createFilterFormMenu(IMenu parentMenu, IUserInterface ui, boolean clearFilter);
+	IMenu createTutorial(IMenu parentMenu);
 }

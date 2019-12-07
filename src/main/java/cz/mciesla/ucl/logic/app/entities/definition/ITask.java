@@ -2,6 +2,7 @@ package cz.mciesla.ucl.logic.app.entities.definition;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public interface ITask extends Comparable<ITask> {
     //region Getters
@@ -50,5 +51,7 @@ public interface ITask extends Comparable<ITask> {
 
     void setDeadline(LocalDate deadline);
 
-	void removeTag(ITag tag);
+    void removeTag(ITag tag);
+    
+    void setTags(List<ITag> tags);
 }

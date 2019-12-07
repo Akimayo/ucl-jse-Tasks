@@ -59,7 +59,7 @@ public class TaskService implements ITaskService {
                 comp = new TitleComparator();
                 break;
             }
-            return (ITask[]) Stream.of(this.getAllTasks()).sorted(comp).toArray();
+            return Stream.of(this.getAllTasks()).sorted(comp).toArray(ITask[]::new);
         } else
             return new ITask[0];
     }
@@ -68,8 +68,8 @@ public class TaskService implements ITaskService {
     public ITask[] searchTasksForKeyword(String keyword) {
         if (this.userService.isUserLoggedIn()) {
             Pattern p = Pattern.compile(keyword);
-            return (ITask[]) Stream.of(this.getAllTasks())
-                    .filter(i -> p.matcher(i.getTitle()).matches() || p.matcher(i.getNote()).matches()).toArray();
+            return Stream.of(this.getAllTasks())
+                    .filter(i -> p.matcher(i.getTitle()).matches() || p.matcher(i.getNote()).matches()).toArray(ITask[]::new);
         } else
             return new ITask[0];
     }
@@ -77,7 +77,7 @@ public class TaskService implements ITaskService {
     @Override
     public ITask[] getAllTasksByCategory(ICategory category) {
         if (this.userService.isUserLoggedIn()) {
-            return (ITask[]) Stream.of(this.getAllTasks()).filter(i -> i.getCategory().equals(category)).toArray();
+            return Stream.of(this.getAllTasks()).filter(i -> i.getCategory() != null && i.getCategory().equals(category)).toArray(ITask[]::new);
         } else
             return new ITask[0];
     }
@@ -85,8 +85,8 @@ public class TaskService implements ITaskService {
     @Override
     public ITask[] getAllTasksByTag(ITag tag) {
         if (this.userService.isUserLoggedIn()) {
-            return (ITask[]) Stream.of(this.getAllTasks()).filter(i -> Stream.of(i.getTags()).anyMatch(j -> j.equals(tag)))
-                    .toArray();
+            return Stream.of(this.getAllTasks()).filter(i -> Stream.of(i.getTags()).anyMatch(j -> j.equals(tag)))
+                    .toArray(ITask[]::new);
         } else
             return new ITask[0];
     }
@@ -95,8 +95,8 @@ public class TaskService implements ITaskService {
     public ITask[] getAllTasksByTags(ITag[] tag) {
         if (this.userService.isUserLoggedIn()) {
             Set<ITag> tags = new HashSet<>(Arrays.asList(tag));
-            return (ITask[]) Stream.of(this.getAllTasks()).filter(i -> tags.containsAll(Arrays.asList(i.getTags())))
-                    .toArray();
+            return Stream.of(this.getAllTasks()).filter(i -> tags.containsAll(Arrays.asList(i.getTags())))
+                    .toArray(ITask[]::new);
         } else
             return new ITask[0];
     }
@@ -105,9 +105,9 @@ public class TaskService implements ITaskService {
     public ITask[] getAllTasksByTags(ITag[] tag, ICategory category) {
         if (this.userService.isUserLoggedIn()) {
             Set<ITag> tags = new HashSet<>(Arrays.asList(tag));
-            return (ITask[]) Stream.of(this.getAllTasks())
+            return Stream.of(this.getAllTasks())
                     .filter(i -> tags.containsAll(Arrays.asList(i.getTags())) && i.getCategory().equals(category))
-                    .toArray();
+                    .toArray(ITask[]::new);
         } else
             return new ITask[0];
     }
@@ -152,7 +152,6 @@ public class TaskService implements ITaskService {
     public void updateTask(int id, ITag tag) {
         if(this.userService.isUserLoggedIn()) {
             ITask target = this.manager.getTaskByIdForUser(id, this.userService.getUserLoggedIn());
-            // FIXME: This is really wonky
             if(Stream.of(target.getTags()).anyMatch(i -> i.getId() == tag.getId()))
                 target.removeTag(tag);
             else target.addTag(tag);

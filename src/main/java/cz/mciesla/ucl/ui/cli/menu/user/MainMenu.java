@@ -21,6 +21,7 @@ public class MainMenu extends Menu {
 
     @Override
     protected void build() {
+		IMenu tutorialMenu = ui.getMenuFactory().createTutorial(this);
     	if(logic.isUserLoggedIn()) {
     		/*setDescription("Abyste mohli aplikaci používat, je nutné se nejprve přihlásit.\n\n"
 	                + "Pokud ještě nemáte svůj uživatelský účet, je možné se registrovat.");*/
@@ -43,6 +44,7 @@ public class MainMenu extends Menu {
 	        addOption(new MenuOption(nextOptionNumber(), loginMenu));
 	        addOption(new MenuOption(nextOptionNumber(), registerMenu));
 	        addOption(new MenuOption(nextOptionNumber(), quitMenu));
-    	}
+		}
+		addOption(new MenuOption(nextOptionNumber(), tutorialMenu));
     }
 }

@@ -10,7 +10,7 @@ public interface ITag extends ITaskOwner, Comparable<ITag> {
 	LocalDateTime getCreatedAt();
 	LocalDateTime getUpdatedAt();
 	void setTitle(String title);
-	void setColor(Color color);
+    void setColor(Color color);
 
     // see ITaskOwner
 }

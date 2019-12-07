@@ -26,9 +26,7 @@ public class TaskMapper implements ITaskMapper {
         IUser userEntity = factory.getUserMapper().mapFromDAOShallow(dao.getUser());
         ICategory categoryEntity = null;
         if(dao.getCategory() != null) categoryEntity = factory.getCategoryMapper().mapFromDAOShallow(dao.getCategory());
-        List<ITag> tagEntities = null;
-        if(dao.getTags() != null) tagEntities = factory.getTagMapper().mapFromDAOsShallow(dao.getTags());
-        ITask taskEntity = new Task(userEntity, dao.getId(), dao.getTitle(), dao.getNote(), dao.isDone(), categoryEntity, dao.getDeadline(), tagEntities, dao.getCreatedAt(), dao.getUpdatedAt());
+        ITask taskEntity = new Task(userEntity, dao.getId(), dao.getTitle(), dao.getNote(), dao.isDone(), categoryEntity, dao.getDeadline(), dao.getCreatedAt(), dao.getUpdatedAt());
         return taskEntity;
     }
 
@@ -51,9 +49,7 @@ public class TaskMapper implements ITaskMapper {
     public ITask mapFromDAODeep(TaskDAO dao) {
         ITask taskEntity = mapFromDAOShallow(dao);
         List<ITag> tagEntities = factory.getTagMapper().mapFromDAOsShallow(dao.getTags());
-        for (ITag tagEntity : tagEntities) {
-            taskEntity.addTag(tagEntity);
-        }
+        taskEntity.setTags(tagEntities);
         return taskEntity;
     }
 

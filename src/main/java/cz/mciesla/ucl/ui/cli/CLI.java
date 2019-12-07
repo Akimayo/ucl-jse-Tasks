@@ -8,7 +8,10 @@ import cz.mciesla.ucl.ui.cli.forms.FormManager;
 import cz.mciesla.ucl.ui.cli.menu.MenuFactory;
 import cz.mciesla.ucl.ui.cli.menu.system.AssignTagMenu;
 import cz.mciesla.ucl.ui.cli.menu.system.DestroyEntityMenu;
+import cz.mciesla.ucl.ui.cli.menu.system.SetOrderMenu;
 import cz.mciesla.ucl.ui.cli.menu.system.ToggleDoneMenu;
+import cz.mciesla.ucl.ui.cli.menu.user.FilterBy;
+import cz.mciesla.ucl.ui.cli.menu.user.ListMenu;
 import cz.mciesla.ucl.ui.cli.views.*;
 import cz.mciesla.ucl.ui.definition.forms.IForm;
 import cz.mciesla.ucl.ui.definition.forms.IFormField;
@@ -126,8 +129,11 @@ public class CLI implements ICLI {
         case "tag":
             actionTag(fromMenu, formData);
             break;
-        case "user":
+        case "user_edit":
             actionUserUpdate(fromMenu, formData);
+            break;
+        case "filter":
+            actionSetFilters(fromMenu, formData);
             break;
         }
     }
@@ -164,11 +170,27 @@ public class CLI implements ICLI {
         try {
             logic.registerUser(data.get("email"), data.get("username"), data.get("password"));
             logic.loginUser(data.get("email"), data.get("password"));
+            // Create default categories
             for(String title : new String[] {"UCL", "JSE", "WEB", "3DT", "PR1", "PES", "Nákupy", "Wishlist"})
                 this.logic.createTag(title);
+            // Create default tags
             for(String title : new String[] {"Osobní", "Škola", "Práce"})
                 this.logic.createCategory(title);
-            // TODO: Default tasks
+            // Cache entities
+            ICategory[] categoryCache = this.logic.getAllCategories();
+            ITag[] tagCache = this.logic.getAllTags();
+            ITask[] taskMemoryHelper;
+            // Create default tasks
+            this.logic.createTask("Toto je jednoduchý úkol");
+            this.logic.createTask("Toto je už dokončený úkol");
+            this.logic.createTask("Nakoupit na večeři", "", categoryCache[0], null);
+            this.logic.createTask("Udělat semestrální práci z předmětu JSE", "", categoryCache[1], null);
+            taskMemoryHelper = this.logic.getAllTasks();
+            this.logic.updateTask(taskMemoryHelper[1].getId());
+            this.logic.updateTask(taskMemoryHelper[2].getId(), tagCache[6]);
+            this.logic.updateTask(taskMemoryHelper[3].getId(), tagCache[0]);
+            this.logic.updateTask(taskMemoryHelper[3].getId(), tagCache[1]);
+            // Finish
             logic.logoutUser();
             drawMessage("Registrace proběhla úspěšně");
         } catch (EmailAddressAlreadyUsedException e) {
@@ -181,7 +203,7 @@ public class CLI implements ICLI {
             LocalDate date = null;
             try {
                 date = LocalDate.parse(formData.get("deadline"), DateTimeFormatter.BASIC_ISO_DATE);
-            } catch (DateTimeParseException e) {}
+            } catch (DateTimeParseException | NullPointerException e) {}
             if (formData.get("task").equals("")) {
                 ICategory cat;
                 if(!formData.containsKey("category") || formData.get("category") == "") cat = null;
@@ -232,13 +254,26 @@ public class CLI implements ICLI {
     private void actionUserUpdate(IMenu fromMenu, Map<String, String> formData) {
         if(this.logic.getUserLoggedIn().getPassword().equals(formData.get("old_password"))) {
             if(formData.get("new_password").equals(formData.get("new_confirm"))) {
-                // TODO: User update
                 this.logic.updateUserLoggedIn(formData.get("email"), formData.get("username"), formData.get("new_password"));
             } else {
                 this.drawError("Nová hesla se neshodují");
             }
         } else {
             this.drawError("Staré heslo je nesprávné");
+        }
+    }
+
+    private void actionSetFilters(IMenu fromMenu, Map<String, String> formData) {
+        if(formData.containsKey("clear")) {
+            ListMenu.resetFilter();
+        } else {
+            String[] tagTitles = null;
+            if(formData.get("tags") != null) tagTitles = formData.get("tags").split(",");
+            else tagTitles = new String[0];
+            String[] titles = new String[tagTitles.length + 1];
+            titles[0] = formData.get("category");
+            for(int i = 1; i < titles.length; i++) titles[i] = tagTitles[i-1];
+            ListMenu.setFilter(FilterBy.values()[Integer.parseInt(formData.get("type"))], titles);
         }
     }
     // endregion
@@ -364,6 +399,11 @@ public class CLI implements ICLI {
             this.logic.updateTask(assignMenu.getTask().getId(), assignMenu.getTag());
             nextMenu = assignMenu.getParentMenu();
             break;
+        case SYSTEM_SET_ORDER:
+            SetOrderMenu orderMenu = (SetOrderMenu)nextMenu;
+            ListMenu.setTasksOrder(orderMenu.getOrder());
+            nextMenu = orderMenu.getParentMenu();
+            break;
         default:
             throw new RuntimeException(nextMenu.getType() + " is not valid type of system menu ");
         }
@@ -385,7 +425,7 @@ public class CLI implements ICLI {
                     in = getInput(field);
                     try {
                         in = LocalDate.parse(in).format(DateTimeFormatter.BASIC_ISO_DATE);
-                    } catch (DateTimeParseException e) {
+                    } catch (DateTimeParseException | NullPointerException e) {
                         drawError("Vložená hodnota není datum");
                     }
                     break;
@@ -424,6 +464,22 @@ public class CLI implements ICLI {
                     if(categoryIndex == 1) ret.put(field.getIdentifier(), "");
                     else ret.put(field.getIdentifier(), Integer.toString(categories[categoryIndex - 2].getId()));
                     continue;
+                case FILTER:
+                    FilterBy[] filters = FilterBy.values();
+                    this.drawPrompt("Filtrovat podle: ");
+                    StringBuilder fout = new StringBuilder();
+                    for(int i = 1; i <= filters.length; i++) {
+                        fout.append(i + ": " + filters[i-1].name() + "    ");
+                    }
+                    this.drawPrompt(fout.toString());
+                    int filterIndex = -1;
+                    do {
+                        this.drawPrompt(field.getLabel());
+                        System.out.print(" : ");
+                        filterIndex = this.promptNumber();
+                    } while(filterIndex <= 0 || filterIndex > filters.length + 1);
+                    ret.put(field.getIdentifier(), Integer.toString(filterIndex - 1));
+                    continue;
                 default:
                     in = getInput(field);
                     break;
@@ -439,8 +495,11 @@ public class CLI implements ICLI {
         boolean hasInput;
         do {
             hasInput = this.sc.hasNext();
-            if (hasInput)
-                return this.sc.next();
+            if (hasInput) {
+                String sr = this.sc.next();
+                if(sr.equals("-")) hasInput = false;
+                else return sr.replace("_", " ");
+            }
         } while (field.getIsRequired() && !hasInput);
         return null;
     }

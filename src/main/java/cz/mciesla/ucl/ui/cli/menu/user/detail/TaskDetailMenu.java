@@ -10,10 +10,10 @@ import cz.mciesla.ucl.ui.definition.views.ITaskView;
 
 public class TaskDetailMenu extends Menu {
 
-    private final ITaskView formatter;
-    private final ITask task;
+    private ITaskView formatter;
+    private ITask task;
 
-	public TaskDetailMenu(final IMenu listMenu, final IUserInterface ui, final ITask e) {
+	public TaskDetailMenu(IMenu listMenu, IUserInterface ui, ITask e) {
         super(listMenu, "task_detail", e.getTitle());
         this.task = e;
 
