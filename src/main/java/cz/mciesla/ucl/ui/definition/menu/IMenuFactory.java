@@ -3,7 +3,6 @@ package cz.mciesla.ucl.ui.definition.menu;
 import cz.mciesla.ucl.logic.app.entities.definition.ICategory;
 import cz.mciesla.ucl.logic.app.entities.definition.ITag;
 import cz.mciesla.ucl.logic.app.entities.definition.ITask;
-import cz.mciesla.ucl.ui.cli.menu.user.MainMenu;
 import cz.mciesla.ucl.ui.cli.menu.user.detail.TaskDetailMenu;
 import cz.mciesla.ucl.ui.definition.IUserInterface;
 

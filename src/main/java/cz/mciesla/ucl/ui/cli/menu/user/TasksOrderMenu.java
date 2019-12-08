@@ -33,6 +33,8 @@ public class TasksOrderMenu extends Menu {
         this.addOption(new MenuOption(nextOptionNumber(), orderMenu.by(TasksOrder.BY_CREATED_AT_DESC)));
         this.addOption(new MenuOption(nextOptionNumber(), orderMenu.by(TasksOrder.BY_UPDATED_AT_ASC)));
         this.addOption(new MenuOption(nextOptionNumber(), orderMenu.by(TasksOrder.BY_UPDATED_AT_DESC)));
+        this.addOption(new MenuOption(nextOptionNumber(), orderMenu.by(TasksOrder.BY_DEADLINE_ASC)));
+        this.addOption(new MenuOption(nextOptionNumber(), orderMenu.by(TasksOrder.BY_DEADLINE_DESC)));
     }
 
     

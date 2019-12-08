@@ -15,11 +15,25 @@ public class TutorialMenu extends Menu {
 
     @Override
     protected void build() {
-        setDescription("> Tag           Přiřazený"+
-                       "  Tag           Nepřiřazený"+
-                       "*               Povinné pole"+
-                       "-               Prázdná hodnota"+
-                       "_               Mezera"); // TODO: Tutorial Text
+        StringBuilder tutorial = new StringBuilder();
+        String[] lines = new String[] {
+                        "  Formulářová pole  ",
+                        "===============================",
+                        "*               Povinné pole",
+                        " Formulářové vstupy ",
+                        "-------------------------------",
+                        "-               Prázdná hodnota",
+                        "_               Mezera",
+                        "  Správa úkolů  ",
+                        "===============================",
+                        " Značky ",
+                        "-------------------------------",
+                        "> Tag           Přiřazená",
+                        "  Tag           Nepřiřazená"
+                    };
+        for(String line : lines) 
+            tutorial.append(line).append(System.lineSeparator());
+        setDescription(tutorial.toString());
         
         IMenu backMenu = ui.getMenuFactory().createBackMenu(this.parentMenu);
 

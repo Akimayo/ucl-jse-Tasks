@@ -54,6 +54,12 @@ public class TaskService implements ITaskService {
             case BY_UPDATED_AT_DESC:
                 comp = new UpdatedAtDescComparator();
                 break;
+            case BY_DEADLINE_ASC:
+                comp = new DeadlineAscComparator();
+                break;
+            case BY_DEADLINE_DESC:
+                comp = new DeadlineDescComparator();
+                break;
             case BY_TITLE:
             default:
                 comp = new TitleComparator();
@@ -208,6 +214,30 @@ public class TaskService implements ITaskService {
         @Override
         public int compare(final ITask o1, final ITask o2) {
             return new UpdatedAtAscComparator().compare(o1, o2) * -1;
+        }
+    }
+    private final class DeadlineAscComparator implements Comparator<ITask> {
+        @Override
+        public int compare(ITask o1, ITask o2) {
+            if(o1.getDeadline() == null && o2.getDeadline() == null)
+                return 0;
+            if(o1.getDeadline() == null)
+                return -1;
+            if(o2.getDeadline() == null)
+                return 1;
+            return o1.getDeadline().compareTo(o2.getDeadline());
+        }
+    }
+    private final class DeadlineDescComparator implements Comparator<ITask> {
+        @Override
+        public int compare(ITask o1, ITask o2) {
+            if(o1.getDeadline() == null && o2.getDeadline() == null)
+                return 0;
+            if(o1.getDeadline() == null)
+                return -1;
+            if(o2.getDeadline() == null)
+                return 1;
+            return -o1.getDeadline().compareTo(o2.getDeadline());
         }
     }
     // endregion

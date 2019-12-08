@@ -111,9 +111,11 @@ public abstract class Menu implements IMenu {
     }
     @Override
     public String render() {
+        String spacer = "";
+        for(int i = 0; i < 34-this.title.length(); i++) spacer += " ";
         // TODO: Improve UI string
         return "===-===-===-===-===-===-===-===-===-===" + System.lineSeparator() +
-               "=  " + this.title + " =" + System.lineSeparator() +
+               "=  " + this.title + spacer + " =" + System.lineSeparator() +
                "===-===-===-===-===-===-===-===-===-===" + System.lineSeparator() +
                (this.description == null ? " " : this.description);
     }
